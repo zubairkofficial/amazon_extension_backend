@@ -55,29 +55,33 @@
     <div class="form-group mb-4">
         <label class="form-label" for="key">Key</label>
         <div class="form-control-wrap">
-            <input class="form-control" id="key" name="key" type="text"
-                value="{{ old('key',$gptKey->key) }}" />
+            <input class="form-control" id="key" name="key" type="text" value="{{ old('key',$gptKey->key) }}" />
             <small class="text-danger"></small>
         </div>
     </div>
 
     <div class="form-group mb-4">
-        <label class="form-label" for="prompt">Prompt</label>
+        <label class="form-label" for="product_prompt">Product Compare Prompt</label>
         <div class="form-control-wrap">
-            <textarea class="form-control" id="prompt" name="prompt">{{ $gptKey->prompt }}</textarea>
+            <textarea class="form-control" rows="15" id="product_prompt"
+                name="product_prompt">{{ $gptKey->product_prompt }}</textarea>
             <small class="text-danger"></small>
         </div>
         <div class="mb-3">
             <div>
                 <strong>Scrape Arguments: </strong>
                 @foreach ($scrapeArguments as $promptArgument)
-                    <button type="button" class="btn border border-primary d-inline-block m-1 px-2 py-0 prompt-argument" data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                <button type="button"
+                    class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument"
+                    data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
                 @endforeach
             </div>
             <div>
                 <strong>System Arguments: </strong>
                 @foreach ($systemArguments as $promptArgument)
-                    <button type="button" class="btn border border-primary d-inline-block m-1 px-2 py-0 prompt-argument" data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                <button type="button"
+                    class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument"
+                    data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
                 @endforeach
             </div>
         </div>
@@ -103,7 +107,40 @@
                     this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
                 }
             }
-            new ArgumentsHandler('#prompt', '.prompt-argument');
+            new ArgumentsHandler('#product_prompt', '.product-prompt-argument');
+        </script>
+    </div>
+    <div class="form-group mb-4">
+        <label class="form-label" for="image_prompt">Image Compare Prompt</label>
+        <div class="form-control-wrap">
+            <textarea class="form-control" id="image_prompt" rows="10"
+                name="image_prompt">{{ $gptKey->image_prompt }}</textarea>
+            <small class="text-danger"></small>
+        </div>
+        <div class="mb-3">
+            <div>
+                <strong>Scrape Arguments: </strong>
+                @foreach ($scrapeArguments as $promptArgument)
+                @if($promptArgument==='image')
+                <button type="button"
+                    class="btn border border-primary d-inline-block m-1 px-2 py-0 image-prompt-argument"
+                    data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                @endif
+                @endforeach
+            </div>
+            <div>
+                <strong>System Arguments: </strong>
+                @foreach ($systemArguments as $promptArgument)
+                @if($promptArgument=='image')
+                <button type="button"
+                    class="btn border border-primary d-inline-block m-1 px-2 py-0 image-prompt-argument"
+                    data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                @endif
+                @endforeach
+            </div>
+        </div>
+        <script>
+            new ArgumentsHandler('#image_prompt', '.image-prompt-argument');
         </script>
     </div>
 

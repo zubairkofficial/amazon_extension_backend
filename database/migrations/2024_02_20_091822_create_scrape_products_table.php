@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('priceUnit');
             $table->string('unit');
             $table->string('price');
-            $table->json('imageUrls');
+            $table->string('image');
             $table->json('colorVariations');
             $table->json('dimension');
             $table->json('detailInfo');

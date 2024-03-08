@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ScrapeProductController;
-use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\SelectorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +19,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/webhook', [WebhookController::class, 'handle']);
-Route::post('testcode', [ScrapeProductController::class, 'testcode']);
-Route::post('testwebhook', [ScrapeProductController::class, 'testwebhook']);
+Route::post('testgptapi', [ScrapeProductController::class, 'testgptapi']);
 
 Route::prefix('scrapeProduct')->group(function () {
     Route::post('save', [ScrapeProductController::class, 'save']);
+});
+
+Route::prefix('selectors')->group(function () {
+    Route::get('all', [SelectorController::class, 'getall']);
+});
+Route::get('test',function(){
+    return $data = ['match'=>'Yes','Reason'=>'reason'];
 });

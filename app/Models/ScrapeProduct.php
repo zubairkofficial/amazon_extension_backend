@@ -10,20 +10,10 @@ class ScrapeProduct extends Model
     use HasFactory;
 
     protected $casts = [
-        'imageUrls' => 'array',
         'dimension' => 'array',
         'detailInfo' => 'array',
         'colorVariations' => 'array',
     ];
-    public function setImageUrlsAttribute($value)
-    {
-        $this->attributes['imageUrls'] = json_encode($value);
-    }
-
-    public function getImageUrlsAttribute($value)
-    {
-        return json_decode($value, true);
-    }
     public function setDimensionAttribute($value)
     {
         $this->attributes['dimension'] = json_encode($value);

@@ -14,7 +14,8 @@ class GPTKeyController extends Controller
         $gptKey = GptKey::first();
         $gptKey->model = $request->model;
         $gptKey->key = $request->key;
-        $gptKey->prompt = $request->prompt; 
+        $gptKey->product_prompt = $request->product_prompt;
+        $gptKey->image_prompt = $request->image_prompt;
         $gptKey->save();
 
         $option = Option::where('key', 'product-url')->first();

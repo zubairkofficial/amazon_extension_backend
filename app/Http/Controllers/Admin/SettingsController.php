@@ -13,21 +13,24 @@ use App\Models\SystemProduct;
 
 class SettingsController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view("admin.settings", [
             'gptKey' => GptKey::first(),
             'user' => Auth::user(),
             'productUrl' => Option::where('key', 'product-url')->first()->value,
-            'scrapeArguments' => Schema::getColumnListing( (new ScrapeProduct)->getTable() ),
-            'systemArguments' => Schema::getColumnListing( (new SystemProduct)->getTable() ),
+            'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
+            'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $gptKey = GptKey::first();
         $gptKey->model = $request->model;
         $gptKey->key = $request->key;
-        $gptKey->prompt = $request->prompt;
+        $gptKey->product_prompt = $request->product_prompt;
+        $gptKey->image_prompt = $request->image_prompt;
         $gptKey->save();
 
         $option = Option::where('key', 'product-url')->first();
