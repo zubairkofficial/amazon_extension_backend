@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->text('selector');
             $table->string('type'); // e.g., 'id', 'class', 'tag'
+            $table->string('status'); // e.g., 'enable', 'disable'
             $table->timestamps();
         });
     }

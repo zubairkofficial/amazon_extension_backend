@@ -95,4 +95,9 @@ class UserController extends Controller
         $user->delete();
         return response()->redirectTo('/admin/users')->with('success', 'User deleted successfully.');
     }
+
+    public function admin_profile()
+    {
+        return view('admin.profile');
+    }
 }

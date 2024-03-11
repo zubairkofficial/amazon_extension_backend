@@ -22,7 +22,7 @@ class ScrapeProductController extends Controller
     {
         $products = $request->productList;
         $userId = $request->userId;
-        $code = $this->generateCode();
+        $code = Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5);
 
         if (empty($userId)) {
             return response()->json(["message" => "Invalid user ID provided"], 400);
@@ -56,7 +56,7 @@ class ScrapeProductController extends Controller
             }
 
             DB::commit();
-            return response()->json(["message" => "Products saved and processed successfully"], 200);
+            return response()->json(["message" => "Products saved and processed successfully", 'data' => $gptresponse['data']], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["message" => "An unexpected error occurred", "error" => $e->getMessage()], 500);
@@ -111,7 +111,7 @@ class ScrapeProductController extends Controller
     //         });
     //         return ['status' => 'success'];
     //     } catch (\Exception $e) {
-    //         StorageLog::error("An error occurred: line:112 disptachgptresp function" . $e->getMessage());
+    //         StorageLog::error("An error occurred: line:114 disptachgptresp function" . $e->getMessage());
     //         return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
     //     }
     // }
@@ -150,6 +150,7 @@ class ScrapeProductController extends Controller
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
+
                 $content = $this->substituteValues($gptKey->product_prompt, $scrapeProduct, $systemProduct);
                 // StorageLog::info($content);
                 $open_ai = new OpenAi($gptKey->key);
@@ -167,6 +168,7 @@ class ScrapeProductController extends Controller
                         ],
                     ],
                     'temperature' => 1,
+                    'max_tokens' => 130,
                 ]);
 
                 $d = json_decode($chat);
@@ -174,8 +176,15 @@ class ScrapeProductController extends Controller
                 // $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
                 // StorageLog::info($image_match);
                 // if ($image_match['status'] === 'error') {
-                //     return response()->json(['status' => $image_match['status'], "message" => $image_match['message'], 500]);
+                //     return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
                 // }
+
+                // $image_match_data = $image_match['data'];
+                // StorageLog::info($image_match_data->match);
+                // StorageLog::info($image_match_data->reason);
+                // $log->image_match = $image_match_data->match;
+                // $log->image_match_reason = $image_match_data->reason;
+
 
                 $log = new Log();
                 $log->user_id = $userId;
@@ -186,8 +195,9 @@ class ScrapeProductController extends Controller
                     ScrapeProduct::find($id)->delete();
                     SystemProduct::where('code', $scrapeProduct->code)->first()->delete();
                 }
+                ;
             }
-            return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully'];
+            return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
         } catch (\Exception $e) {
             StorageLog::error("An error occurred:  " . $e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
@@ -234,21 +244,11 @@ class ScrapeProductController extends Controller
         }
     }
 
-    public function generateCode()
-    {
-        $part1 = Str::random(5);
-        $part2 = Str::random(5);
-        $part3 = Str::random(5);
-        $part4 = Str::random(5);
-        $code = $part1 . "-" . $part2 . "-" . $part3 . "-" . $part4;
-        return $code;
-    }
+
     public function gptVisionResponse($scrapeProduct, $systemProduct)
     {
         try {
             $gptKey = GptKey::first();
-            // $content ="You will help to compare these images first object is array of images string and second object is string \n" . $scrapeProduct->imageUrls .
-            //     " \n " . $systemProduct->image . "If you provide me with a text like this if image match:'yes' else text like this:'no'";
             $content = $this->substituteValues($gptKey->image_prompt, $scrapeProduct, $systemProduct);
             // StorageLog::info($content);
             $open_ai = new OpenAi($gptKey->key);
@@ -258,7 +258,8 @@ class ScrapeProductController extends Controller
                 "messages" => [
                     [
                         'role' => 'system',
-                        'content' => "You are a helpful assistant.",
+                        'content' => "You are a helpful assistant designed to output JSON",
+                        // 'content' => "You are a helpful assistant.",
                     ],
                     [
                         'role' => 'user',
@@ -274,11 +275,12 @@ class ScrapeProductController extends Controller
             $d = json_decode($chat);
             // return $d;
             $response = $d->choices[0]->message->content;
-            $data = json_decode($this->formatJsonContent($response));
+            $data = $this->formatJsonContent($response);
             // StorageLog::info(print_r($data));
-            return response()->json(['status' => 'success', 'data' => $data]);
+
+            return ['status' => 'success', 'data' => json_decode($data)];
         } catch (\Exception $e) {
-            // StorageLog::info($e->getMessage());
+            StorageLog::info($e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
         }
     }
@@ -296,19 +298,16 @@ class ScrapeProductController extends Controller
         return $content;
     }
 
-
-
     public function testgptapi()
     {
         try {
             $gptKey = GptKey::first();
             $open_ai = new OpenAi($gptKey->key);
 
-
             $content = json_encode([
                 [
                     'type' => 'text',
-                    'text' => 'You will help to compare these images, provide me with a text like this if image match: {"match":"yes","reason":"why"} else text like this: {"match":"no","reason":"give short reason why"}',
+                    'text' => 'What are in these images? Is there any difference between them?, provide me with a text like this if image match: {"match":"yes","reason":"why"} else text like this: {"match":"no","reason":"give short reason why"}',
                 ],
                 [
                     'type' => 'image_url',
@@ -323,6 +322,7 @@ class ScrapeProductController extends Controller
                     ],
                 ],
             ]);
+            StorageLog::info($content);
             $chat = $open_ai->chat([
                 "model" => 'gpt-4-vision-preview',
                 "messages" => [

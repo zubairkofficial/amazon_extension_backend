@@ -30,9 +30,7 @@ Route::get('/', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'user.check'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('home', ['logs' => Log::where('user_id', Auth::user()->id)->get()]);
-    })->name('dashboard');
+    Route::get('/dashboard', function () { return view('home');})->name('dashboard');
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -46,6 +44,8 @@ require __DIR__ . '/auth.php';
 
 Route::middleware(['auth', 'admin.check'])->prefix('/admin')->group(function () {
     Route::redirect('/', '/admin/dashboard')->name('admin.dashboard');
+    Route::get('/admin_profile', [UserController::class, 'admin_profile'])->name('admin.profile');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/fetch-logs', [DashboardController::class, 'fetchLogs']);
     Route::get('/log/{id}', [DashboardController::class, 'show']);

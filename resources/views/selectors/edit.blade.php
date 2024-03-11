@@ -14,7 +14,8 @@
     <div class="form-group mb-4">
         <label class="form-label" for="name">Name</label>
         <div class="form-control-wrap">
-            <input class="form-control" id="name" name="name" type="text" value="{{ old('name',$selector->name) }}" readonly/>
+            <input class="form-control" id="name" name="name" type="text" value="{{ old('name',$selector->name) }}"
+                readonly />
             <small class="text-danger"></small>
         </div>
     </div>
@@ -41,6 +42,23 @@
                 <option value="tag" @if($selector->
                     type == 'tag') selected @endif>
                     tag
+                </option>
+            </select>
+            <small class="text-danger"></small>
+        </div>
+    </div>
+
+    <div class="form-group mb-4">
+        <label class="form-label" for="status">Status</label>
+        <div class="form-control-wrap">
+            <select class="form-control" id="status" name="status">
+                <option value="enable" @if($selector->
+                    status == 'enable') selected @endif>
+                    enable
+                </option>
+                <option value="disable" @if($selector->
+                    status == 'disable') selected @endif>
+                    disable
                 </option>
             </select>
             <small class="text-danger"></small>

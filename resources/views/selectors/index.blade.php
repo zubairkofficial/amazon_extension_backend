@@ -16,6 +16,8 @@
             <th>Name</th>
             <th>Selector</th>
             <th>Type</th>
+            <th>Status</th>
+            </th>
             <th>Action</th>
         </tr>
     </thead>
@@ -27,17 +29,17 @@
             <td>{{$selector->name}}</td>
             <td>{{$selector->selector}}</td>
             <td>{{$selector->type}}</td>
+            <td>{{$selector->status}}</td>
             <td>
-                <div class="dropdown">
+                {{-- <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                     </button>
-                    <form class="dropdown-menu">
-                        <a class="dropdown-item" href="/admin/selectors/{{ $selector->id }}/edit">Edit</a>
+                    <form class="dropdown-menu"> --}}
+                        <a class=" btn btn-light" href="/admin/selectors/{{ $selector->id }}/edit">Edit</a>
                         {{-- <a class="dropdown-item" href="/admin/selectors/destroy/{{ $selector->id }}">Delete</a>
-                        --}}
                     </form>
-                </div>
+                </div> --}}
             </td>
         </tr>
         @endforeach

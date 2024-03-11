@@ -74,6 +74,14 @@
                                         </a>
                                     </li>
                                     <li class="nk-menu-item">
+                                        <a href="{{ route('admin.profile') }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon">
+                                                <em class="icon ni ni-user"></em>
+                                            </span>
+                                            <span class="nk-menu-text">Profile Setting</span>
+                                        </a>
+                                    </li>
+                                    <li class="nk-menu-item">
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
                                             <a href="route('logout')"

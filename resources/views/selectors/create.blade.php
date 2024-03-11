@@ -43,6 +43,20 @@
             <small class="text-danger"></small>
         </div>
     </div>
+    <div class="form-group mb-4">
+        <label class="form-label" for="status">Status</label>
+        <div class="form-control-wrap">
+            <select class="form-control" id="status" name="status">
+                <option value="enable">
+                    enable
+                </option>
+                <option value="disable">
+                    disable
+                </option>
+            </select>
+            <small class="text-danger"></small>
+        </div>
+    </div>
 
     <div class="mt-3">
         <button type="submit" class="btn btn-primary">

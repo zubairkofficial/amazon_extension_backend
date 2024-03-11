@@ -24,6 +24,7 @@ class SelectorController extends Controller
         $seletor->name = $request->name;
         $seletor->selector = $request->selector;
         $seletor->type = $request->type;
+        $seletor->status = $request->status;
         $seletor->save();
         return redirect()->route('selectors.index')->with('success', 'Selector created successfully.');
     }
@@ -38,6 +39,7 @@ class SelectorController extends Controller
         $seletor->name = $request->name;
         $seletor->selector = $request->selector;
         $seletor->type = $request->type;
+        $seletor->status = $request->status;
         $seletor->save();
         return redirect()->route('selectors.index')->with('success', 'Selector updated successfully.');
     }
@@ -47,7 +49,8 @@ class SelectorController extends Controller
         return redirect()->route('selectors.index')->with('success', 'Selector deleted successfully.');
     }
 
-    public function getall(){
-        return Selector::all();
+    public function getall()
+    {
+        return Selector::where('status', 'enable')->get();
     }
 }
