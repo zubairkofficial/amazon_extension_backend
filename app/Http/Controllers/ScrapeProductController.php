@@ -87,6 +87,7 @@ class ScrapeProductController extends Controller
             $scrapeproduct->priceUnit = isset($product['priceUnit']) ? $product['priceUnit'] : "0. $";
             $scrapeproduct->image = isset($product['image']) ? $product['image'] : [];
             $scrapeproduct->colorVariations = isset($product['colorVariations']) ? $product['colorVariations'] : [];
+            $scrapeproduct->brandDetails = isset($product['brandDetails']) ? $product['brandDetails'] : [];
             $scrapeproduct->dimension = isset($product['dimension']) ? $product['dimension'] : [];
             $scrapeproduct->shippingCost = isset($product['shippingCost']) ? $product['shippingCost'] : "";
             $scrapeproduct->about_this_item = isset($product['about_this_item']) ? $product['about_this_item'] : "";
@@ -168,7 +169,7 @@ class ScrapeProductController extends Controller
                         ],
                     ],
                     'temperature' => 1,
-                    'max_tokens' => 130,
+                    // 'max_tokens' => 130,
                 ]);
 
                 $d = json_decode($chat);

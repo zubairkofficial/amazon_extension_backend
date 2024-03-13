@@ -13,7 +13,16 @@ class ScrapeProduct extends Model
         'dimension' => 'array',
         'detailInfo' => 'array',
         'colorVariations' => 'array',
+        'brandDetails' => 'array',
     ];
+    public function setBrandDetailsAttribute($value)
+    {
+        $this->attributes['brandDetails'] = json_encode($value);
+    }
+    public function getBrandDetailsAttribute($value)
+    {
+        return json_decode($value, true);
+    }
     public function setDimensionAttribute($value)
     {
         $this->attributes['dimension'] = json_encode($value);
