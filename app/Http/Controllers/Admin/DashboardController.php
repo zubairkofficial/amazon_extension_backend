@@ -22,7 +22,8 @@ class DashboardController extends Controller
     public function show($id)
     {
         $log = Log::find($id);
-        $log->summary = $this->formatResponse($this->responseDecode($log->summary));
+        // $log->summary = $this->formatResponse($this->responseDecode($log->summary));
+        $log->summary = $this->formatResponse($log->summary);
         return view('admin.log', [
             'log' => $log
         ]);
