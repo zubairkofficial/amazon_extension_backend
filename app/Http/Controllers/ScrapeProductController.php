@@ -85,7 +85,7 @@ class ScrapeProductController extends Controller
             $scrapeproduct->unit = isset($product['unit']) ? $product['unit'] : "$";
             $scrapeproduct->asin = isset($product['asin']) ? $product['asin'] : "";
             $scrapeproduct->priceUnit = isset($product['priceUnit']) ? $product['priceUnit'] : "0. $";
-            $scrapeproduct->image = isset($product['image']) ? $product['image'] : [];
+            $scrapeproduct->image = isset($product['image']) ? $product['image'] : '';
             $scrapeproduct->colorVariations = isset($product['colorVariations']) ? $product['colorVariations'] : [];
             $scrapeproduct->brandDetails = isset($product['brandDetails']) ? $product['brandDetails'] : [];
             $scrapeproduct->dimension = isset($product['dimension']) ? $product['dimension'] : [];
@@ -98,7 +98,7 @@ class ScrapeProductController extends Controller
             $createdId = $scrapeproduct->id;
             return ['status' => 'success', 'id' => $createdId];
         } catch (\Exception $e) {
-            // StorageLog::error("An error occurred: line:98 " . $e->getMessage());
+            StorageLog::error("An error occurred: line:98 " . $e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to save scrape product'];
         }
     }
