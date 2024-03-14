@@ -98,7 +98,7 @@ class ScrapeProductController extends Controller
             $createdId = $scrapeproduct->id;
             return ['status' => 'success', 'id' => $createdId];
         } catch (\Exception $e) {
-            StorageLog::error("An error occurred: line:98 " . $e->getMessage());
+            // StorageLog::error("An error occurred: line:98 " . $e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to save scrape product'];
         }
     }
