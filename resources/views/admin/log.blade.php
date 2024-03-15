@@ -11,23 +11,23 @@
     <table class="table table-hover">
         <tr>
             <td class="fw-bold">User</td>
-            <td>{{ $log->user->name }}</td>
+            <td style="white-space: pre-wrap">{{ $log->user->name }}</td>
         </tr>
         <tr>
             <td class="fw-bold">ASIN</td>
-            <td>{{ $log->asin }}</td>
+            <td style="white-space: pre-wrap">{{ $log->asin }}</td>
         </tr>
         <tr>
             <td class="fw-bold">Prompt</td>
-            <td>{!! $log->prompt !!}</td>
+            <td style="white-space: pre-wrap">{!! $log->prompt !!}</td>
         </tr>
         <tr>
             <td class="fw-bold">Product Image</td>
-            <td>{!! $log->image_match !!}</td>
+            <td style="white-space: pre-wrap">{!! $log->image_match !!}</td>
         </tr>
         <tr>
             <td class="fw-bold">Summary</td>
-            <td>{!!$log->summary !!}</td>
+            <td style="white-space: pre-wrap">{!! $log->summary !!}</td>
         </tr>
         <tr>
             <td class="fw-bold">Created At</td>

@@ -23,6 +23,7 @@ class DashboardController extends Controller
     {
         $log = Log::with('user')->find($id);
         // $log->summary = $this->formatResponse($this->responseDecode($log->summary));
+        $log->image_match = $this->formatResponse($log->image_match);
         $log->summary = $this->formatResponse($log->summary);
         return view('admin.log', [
             'log' => $log
