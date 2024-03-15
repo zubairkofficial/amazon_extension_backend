@@ -117,31 +117,6 @@ class ScrapeProductController extends Controller
     //     }
     // }
 
-    // private function substituteValues(string $prompt, ScrapeProduct $scrapeProduct, SystemProduct $systemProduct): string
-    // {
-    //     $scrapeArguments = Schema::getColumnListing((new ScrapeProduct)->getTable());
-    //     $systemArguments = Schema::getColumnListing((new SystemProduct)->getTable());
-
-    //     foreach ($scrapeArguments as $scrapeArgument) {
-    //         $value = $scrapeProduct->$scrapeArgument;
-    //         // Check if the value is an array and convert it to a JSON string if it is
-    //         if (is_array($value)) {
-    //             $value = json_encode($value, JSON_PRETTY_PRINT);
-    //         }
-    //         $prompt = str_replace("{ scrape.$scrapeArgument }", $value, $prompt);
-    //     }
-
-    //     foreach ($systemArguments as $systemArgument) {
-    //         $value = $systemProduct->$systemArgument;
-    //         // Same check for system product arguments
-    //         if (is_array($value)) {
-    //             $value = json_encode($value, JSON_PRETTY_PRINT);
-    //         }
-    //         $prompt = str_replace("{ system.$systemArgument }", $value, $prompt);
-    //     }
-
-    //     return $prompt;
-    // }
     private function substituteValues(string $prompt, ScrapeProduct $scrapeProduct, SystemProduct $systemProduct): string
     {
         $scrapeArguments = Schema::getColumnListing((new ScrapeProduct)->getTable());
@@ -149,9 +124,9 @@ class ScrapeProductController extends Controller
 
         foreach ($scrapeArguments as $scrapeArgument) {
             $value = $scrapeProduct->$scrapeArgument;
-            // Check if the value is an array and convert it to a formatted string if it is
+            // Check if the value is an array and convert it to a JSON string if it is
             if (is_array($value)) {
-                $value = $this->formatArrayAsString($value);
+                $value = json_encode($value, JSON_PRETTY_PRINT);
             }
             $prompt = str_replace("{ scrape.$scrapeArgument }", $value, $prompt);
         }
@@ -160,7 +135,7 @@ class ScrapeProductController extends Controller
             $value = $systemProduct->$systemArgument;
             // Same check for system product arguments
             if (is_array($value)) {
-                $value = $this->formatArrayAsString($value);
+                $value = json_encode($value, JSON_PRETTY_PRINT);
             }
             $prompt = str_replace("{ system.$systemArgument }", $value, $prompt);
         }
@@ -168,16 +143,6 @@ class ScrapeProductController extends Controller
         return $prompt;
     }
 
-    private function formatArrayAsString(array $array): string
-    {
-        $result = "\n";
-        foreach ($array as $key => $value) {
-            $result .= "    $key: $value,\n";
-        }
-        // Remove the trailing comma and add closing brace
-        $result = rtrim($result, "\n") . "\n";
-        return $result;
-    }
     public function gptresponse($data, $userId)
     {
         try {

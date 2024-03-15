@@ -552,6 +552,7 @@ class ComposerStaticInit1061f1c47aca57cdb9830c03cbf9a253
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\DeleteOldLogs' => __DIR__ . '/../..' . '/app/Console/Commands/DeleteOldLogs.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Admin\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/AuthController.php',
