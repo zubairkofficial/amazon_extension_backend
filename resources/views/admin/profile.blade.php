@@ -6,7 +6,7 @@
 
     <div class="p-3 row gx-4 gy-4">
 
-        <form method="post" class="col-lg-6" action="{{ route('profile.update') }}">
+        <form method="post" class="col-lg-6" action="{{ route('profile.adminupdate') }}">
 
             <div class="rounded shadow-sm p-4">
 

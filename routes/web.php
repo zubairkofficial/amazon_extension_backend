@@ -45,7 +45,7 @@ require __DIR__ . '/auth.php';
 Route::middleware(['auth', 'admin.check'])->prefix('/admin')->group(function () {
     Route::redirect('/', '/admin/dashboard')->name('admin.dashboard');
     Route::get('/admin_profile', [UserController::class, 'admin_profile'])->name('admin.profile');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.adminupdate');
 
     Route::get('/fetch-logs', [DashboardController::class, 'fetchLogs']);
     Route::get('/log/{id}', [DashboardController::class, 'show']);
