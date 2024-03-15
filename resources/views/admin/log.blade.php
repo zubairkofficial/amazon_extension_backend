@@ -10,6 +10,10 @@
 
     <table class="table table-hover">
         <tr>
+            <td class="fw-bold">User</td>
+            <td>{{ $log->user->name }}</td>
+        </tr>
+        <tr>
             <td class="fw-bold">ASIN</td>
             <td>{{ $log->asin }}</td>
         </tr>

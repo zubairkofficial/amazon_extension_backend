@@ -21,6 +21,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Sr. </th>
+                                                <th>User</th>
                                                 <th>ASIN</th>
                                                 <th>Prompt</th>
                                                 <th>Summary</th>
@@ -52,11 +53,13 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
+                    console.log(response);
                     $('#data-table tbody').empty();
                     if (response.length > 0) {
                         response.forEach(function(log, index) {
                             var row = `<tr>
                                 <td>${index + 1}</td>
+                                <td>${log.user.name}</td>
                                 <td>${log.asin}</td>
                                 <td>${log.prompt.length > 100 ? log.prompt.substring(0, 100) + '...' : log.prompt}</td>
                                 <td>${log.summary.length > 100 ? log.summary.substring(0, 100) + '...' : log.summary}</td>

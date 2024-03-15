@@ -24,7 +24,7 @@ class ScrapeProductController extends Controller
         $userId = $request->userId;
         $code = Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5);
 
-        if (empty($userId)) {
+        if (empty ($userId)) {
             return response()->json(["message" => "Invalid user ID provided"], 400);
         }
 
@@ -80,19 +80,19 @@ class ScrapeProductController extends Controller
     {
         try {
             $scrapeproduct = new ScrapeProduct();
-            $scrapeproduct->title = isset($product['title']) ? $product['title'] : "";
-            $scrapeproduct->price = isset($product['price']) ? $product['price'] : 0;
-            $scrapeproduct->unit = isset($product['unit']) ? $product['unit'] : "$";
-            $scrapeproduct->asin = isset($product['asin']) ? $product['asin'] : "";
-            $scrapeproduct->priceUnit = isset($product['priceUnit']) ? $product['priceUnit'] : "0. $";
-            $scrapeproduct->image = isset($product['image']) ? $product['image'] : '';
-            $scrapeproduct->colorVariations = isset($product['colorVariations']) ? $product['colorVariations'] : [];
-            $scrapeproduct->brandDetails = isset($product['brandDetails']) ? $product['brandDetails'] : [];
-            $scrapeproduct->dimension = isset($product['dimension']) ? $product['dimension'] : [];
-            $scrapeproduct->shippingCost = isset($product['shippingCost']) ? $product['shippingCost'] : "";
-            $scrapeproduct->about_this_item = isset($product['about_this_item']) ? $product['about_this_item'] : "";
-            $scrapeproduct->detailInfo = isset($product['detailInfo']) ? $product['detailInfo'] : [];
-            $scrapeproduct->description = isset($product['description']) ? $product['description'] : "";
+            $scrapeproduct->title = isset ($product['title']) ? $product['title'] : "";
+            $scrapeproduct->price = isset ($product['price']) ? $product['price'] : 0;
+            $scrapeproduct->unit = isset ($product['unit']) ? $product['unit'] : "$";
+            $scrapeproduct->asin = isset ($product['asin']) ? $product['asin'] : "";
+            $scrapeproduct->priceUnit = isset ($product['priceUnit']) ? $product['priceUnit'] : "0. $";
+            $scrapeproduct->image = isset ($product['image']) ? $product['image'] : '';
+            $scrapeproduct->colorVariations = isset ($product['colorVariations']) ? $product['colorVariations'] : [];
+            $scrapeproduct->brandDetails = isset ($product['brandDetails']) ? $product['brandDetails'] : [];
+            $scrapeproduct->dimension = isset ($product['dimension']) ? $product['dimension'] : [];
+            $scrapeproduct->shippingCost = isset ($product['shippingCost']) ? $product['shippingCost'] : "";
+            $scrapeproduct->about_this_item = isset ($product['about_this_item']) ? $product['about_this_item'] : "";
+            $scrapeproduct->detailInfo = isset ($product['detailInfo']) ? $product['detailInfo'] : [];
+            $scrapeproduct->description = isset ($product['description']) ? $product['description'] : "";
             $scrapeproduct->code = $code;
             $scrapeproduct->save();
             $createdId = $scrapeproduct->id;
@@ -174,11 +174,11 @@ class ScrapeProductController extends Controller
 
                 $d = json_decode($chat);
                 $summary = $d->choices[0]->message->content;
-                // $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
+                $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
                 // StorageLog::info($image_match);
-                // if ($image_match['status'] === 'error') {
-                //     return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
-                // }
+                if ($image_match['status'] === 'error') {
+                    return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
+                }
 
                 // $image_match_data = $image_match['data'];
                 // StorageLog::info($image_match_data->match);
@@ -191,6 +191,7 @@ class ScrapeProductController extends Controller
                 $log->user_id = $userId;
                 $log->asin = $scrapeProduct->asin;
                 $log->prompt = $content;
+                $log->image_match = $image_match['data'];
                 $log->summary = $summary;
                 if ($log->save()) {
                     ScrapeProduct::find($id)->delete();
@@ -200,7 +201,7 @@ class ScrapeProductController extends Controller
             }
             return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
         } catch (\Exception $e) {
-            StorageLog::error("An error occurred:  " . $e->getMessage());
+            // StorageLog::error("An error occurred:  " . $e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
         }
     }
@@ -240,7 +241,7 @@ class ScrapeProductController extends Controller
             }
             return ['status' => 'success'];
         } catch (\Exception $e) {
-            StorageLog::error("An error occurred:" . $e->getMessage());
+            // StorageLog::error("An error occurred:" . $e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
         }
     }
@@ -259,8 +260,8 @@ class ScrapeProductController extends Controller
                 "messages" => [
                     [
                         'role' => 'system',
-                        'content' => "You are a helpful assistant designed to output JSON",
-                        // 'content' => "You are a helpful assistant.",
+                        // 'content' => "You are a helpful assistant designed to output JSON",
+                        'content' => "You are a helpful assistant.",
                     ],
                     [
                         'role' => 'user',
@@ -279,9 +280,10 @@ class ScrapeProductController extends Controller
             $data = $this->formatJsonContent($response);
             // StorageLog::info(print_r($data));
 
-            return ['status' => 'success', 'data' => json_decode($data)];
+            // return ['status' => 'success', 'data' => json_decode($data)];
+            return ['status' => 'success', 'data' => $response];
         } catch (\Exception $e) {
-            StorageLog::info($e->getMessage());
+            // StorageLog::info($e->getMessage());
             return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
         }
     }
@@ -323,7 +325,7 @@ class ScrapeProductController extends Controller
                     ],
                 ],
             ]);
-            StorageLog::info($content);
+            // StorageLog::info($content);
             $chat = $open_ai->chat([
                 "model" => 'gpt-4-vision-preview',
                 "messages" => [
@@ -348,7 +350,7 @@ class ScrapeProductController extends Controller
             $data = $this->formatJsonContent($response);
             return response()->json(json_decode($data));
         } catch (\Exception $e) {
-            StorageLog::info($e->getMessage());
+            // StorageLog::info($e->getMessage());
             return $e->getMessage();
         }
     }

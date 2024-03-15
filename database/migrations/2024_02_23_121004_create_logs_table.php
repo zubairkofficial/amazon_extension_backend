@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId("user_id")->nullable()->constrained()->cascadeOnDelete();
             $table->string('asin');
             $table->text('prompt');
+            $table->text('image_match');
             $table->text('summary');
             $table->timestamps();
         });

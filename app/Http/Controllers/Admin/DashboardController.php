@@ -10,18 +10,18 @@ class DashboardController extends Controller
 {
     public function fetchLogs()
     {
-        $logs = Log::all();
+        $logs = Log::with('user')->get();
         return response()->json($logs);
     }
     public function index()
     {
-        $logs = Log::all();
+        $logs = Log::with('user')->get();
         return view('admin.dashboard', compact('logs'));
     }
 
     public function show($id)
     {
-        $log = Log::find($id);
+        $log = Log::with('user')->find($id);
         // $log->summary = $this->formatResponse($this->responseDecode($log->summary));
         $log->summary = $this->formatResponse($log->summary);
         return view('admin.log', [
