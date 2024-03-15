@@ -22,6 +22,10 @@
             <td>{!! $log->prompt !!}</td>
         </tr>
         <tr>
+            <td class="fw-bold">Product Image</td>
+            <td>{!! $log->image_match !!}</td>
+        </tr>
+        <tr>
             <td class="fw-bold">Summary</td>
             <td>{!!$log->summary !!}</td>
         </tr>

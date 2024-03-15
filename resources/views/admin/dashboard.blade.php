@@ -24,6 +24,7 @@
                                                 <th>User</th>
                                                 <th>ASIN</th>
                                                 <th>Prompt</th>
+                                                <th>Product Image</th>
                                                 <th>Summary</th>
                                                 <th>Created At</th>
                                                 <th>Action</th>
@@ -61,6 +62,7 @@
                                 <td>${log.user.name}</td>
                                 <td>${log.asin}</td>
                                 <td>${log.prompt.length > 100 ? log.prompt.substring(0, 100) + '...' : log.prompt}</td>
+                                <td>${log.image_match.length > 100 ? log.image_match.substring(0, 100) + '...' : log.image_match}</td>
                                 <td>${log.summary.length > 100 ? log.summary.substring(0, 100) + '...' : log.summary}</td>
                                 <td>${moment(log.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
                                 <td>
