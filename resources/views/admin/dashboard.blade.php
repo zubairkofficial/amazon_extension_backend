@@ -53,7 +53,6 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
                     $('#data-table tbody').empty();
                     if (response.length > 0) {
                         response.forEach(function(log, index) {
