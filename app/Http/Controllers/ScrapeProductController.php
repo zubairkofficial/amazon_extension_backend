@@ -49,7 +49,7 @@ class ScrapeProductController extends Controller
             }
 
             // $gptresponse = $this->dispatchGptResp($Ids, $userId);
-            $gptresponse = $this->gptresponse($Ids, $userId);
+            $gptresponse = $this->gptresponse($request, $Ids, $userId);
             if ($gptresponse['status'] === 'error') {
                 DB::rollBack();
                 return response()->json(["message" => $gptresponse['message']], 500);
@@ -143,11 +143,12 @@ class ScrapeProductController extends Controller
         return $prompt;
     }
 
-    public function gptresponse($data, $userId)
+    public function gptresponse(Request $request, $data, $userId)
     {
         try {
             foreach ($data as $id) {
-                $gptKey = GptKey::first();
+                // $gptKey = GptKey::first();
+                $gptKey = GptKey::firstOrFail();
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
@@ -174,11 +175,14 @@ class ScrapeProductController extends Controller
 
                 $d = json_decode($chat);
                 $summary = $d->choices[0]->message->content;
-                $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
                 // StorageLog::info($image_match);
-                if ($image_match['status'] === 'error') {
-                    return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
-                }
+
+
+                // $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
+                // if ($image_match['status'] === 'error') {
+                //     return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
+                // }
+
 
                 // $image_match_data = $image_match['data'];
                 // StorageLog::info($image_match_data->match);
@@ -191,8 +195,19 @@ class ScrapeProductController extends Controller
                 $log->user_id = $userId;
                 $log->asin = $scrapeProduct->asin;
                 $log->prompt = $content;
-                $log->image_match = $image_match['data'];
+                // $log->image_match = $image_match['data'];
+                // $log->image_match = "Image not compared";
                 $log->summary = $summary;
+                $log->image_match = "Image not compared"; // Default value
+
+                if ($gptKey->is_image_compared) {
+                    $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
+                    if ($image_match['status'] === 'error') {
+                        return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
+                    }
+                    $log->image_match = $image_match['data'];
+                }
+
                 if ($log->save()) {
                     ScrapeProduct::find($id)->delete();
                     SystemProduct::where('code', $scrapeProduct->code)->first()->delete();

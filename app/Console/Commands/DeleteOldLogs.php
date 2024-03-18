@@ -20,16 +20,24 @@ class DeleteOldLogs extends Command
      *
      * @var string
      */
-    protected $description = 'Deletes logs from the database that are one day old';
+    protected $description = 'Deletes logs from the database based on the days setting in the database';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $date = Carbon::yesterday();
+        // Assume you have a 'settings' table with a 'key' and 'value' columns
+        // For example, a row with key='log_delete_days' and value='3'
+        $daysSetting = DB::table('gpt_keys')->first();
+        $days = $daysSetting ? (int) $daysSetting->log_delete_days : 1; // Default to 1 day if not set
+
+        // Calculate the date N days ago
+        $date = Carbon::today()->subDays($days);
+
+        // Delete logs older than N days
         DB::table('logs')->whereDate('created_at', '<', $date)->delete();
 
-        $this->info('Old logs have been deleted successfully.');
+        $this->info("Logs older than {$days} day(s) have been deleted successfully.");
     }
 }

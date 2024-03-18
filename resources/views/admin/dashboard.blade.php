@@ -10,6 +10,10 @@
                         <div class="nk-block-head-content">
                             <h2 class="display-6">Logs</h2>
                         </div>
+                        <div class="text-end">
+                            <input type="search" class="form-control" placeholder="Search log" name="search"
+                                id="search">
+                        </div>
                     </div>
                 </div>
                 <div class="nk-block">
@@ -48,41 +52,42 @@
 <script>
     $(document).ready(function() {
         // Function to fetch and append data
-        function fetchData() {
+        function fetchData(searchQuery = '') {
             $.ajax({
                 url: '/admin/fetch-logs',
                 type: 'GET',
+                data: {search: searchQuery}, // Add this line to send the search query to the server
                 dataType: 'json',
                 success: function(response) {
                     $('#data-table tbody').empty();
                     if (response.length > 0) {
-                        response.forEach(function(log, index) {
-                            var row = `<tr>
-                                <td>${index + 1}</td>
-                                <td>${log.user.name}</td>
-                                <td>${log.asin}</td>
-                                <td>${log.prompt.length > 100 ? log.prompt.substring(0, 100) + '...' : log.prompt}</td>
-                                <td>${log.image_match.length > 100 ? log.image_match.substring(0, 100) + '...' : log.image_match}</td>
-                                <td>${log.summary.length > 100 ? log.summary.substring(0, 100) + '...' : log.summary}</td>
-                                <td>${moment(log.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                            aria-expanded="false">Actions</button>
-                                        <form class="dropdown-menu">
-                                            <a class="dropdown-item" href="/admin/log/${log.id}">View</a>
-                                            <a class="dropdown-item" href="/admin/log/delete/${log.id}">Delete</a>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>`;
-                            $('#data-table tbody').append(row);
-                        });
+                    response.forEach(function(log, index) {
+                    var row = `<tr>
+                        <td>${index + 1}</td>
+                        <td>${log.user.name}</td>
+                        <td>${log.asin}</td>
+                        <td>${log.prompt.length > 100 ? log.prompt.substring(0, 100) + '...' : log.prompt}</td>
+                        <td>${log.image_match.length > 100 ? log.image_match.substring(0, 100) + '...' : log.image_match}</td>
+                        <td>${log.summary.length > 100 ? log.summary.substring(0, 100) + '...' : log.summary}</td>
+                        <td>${moment(log.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Actions</button>
+                                <form class="dropdown-menu">
+                                    <a class="dropdown-item" href="/admin/log/${log.id}">View</a>
+                                    <a class="dropdown-item" href="/admin/log/delete/${log.id}">Delete</a>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>`;
+                    $('#data-table tbody').append(row);
+                    });
                     } else {
-                        var row = `<tr>
-                            <td colspan="7">No records found...</td>
-                        </tr>`;
-                        $('#data-table tbody').append(row);
+                    var row = `<tr>
+                        <td colspan="7">No records found...</td>
+                    </tr>`;
+                    $('#data-table tbody').append(row);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -91,8 +96,38 @@
             });
         }
 
-        fetchData();
-        setInterval(fetchData, 5000);
+        // Add event listener for the search input field
+        $('#search').on('input', function() {
+        var searchQuery = $(this).val();
+
+        if (searchQuery === '') {
+        // If input is cleared, restart the interval
+        startFetchInterval();
+        } else {
+        // If there is a search query, stop the interval and fetch data based on the query
+        clearInterval(fetchIntervalId);
+        fetchData(searchQuery);
+        }
+        });
+
+        // Initialize
+        if ($('#search').val() === '') {
+            startFetchInterval(); // Start the interval if the search field is empty when the page loads
+        } else {
+            fetchData($('#search').val()); // Otherwise, fetch data based on the current value
+        }
+        var fetchIntervalId; // Variable to store the interval ID
+
+        // Function to start the data fetch interval
+        function startFetchInterval() {
+            // Clear existing interval to prevent duplicates
+            clearInterval(fetchIntervalId);
+
+            // Set a new interval
+            fetchIntervalId = setInterval(function() {
+                fetchData(); // Call fetchData without parameters to get all data
+            }, 5000);
+        }
     });
 </script>
 @endsection

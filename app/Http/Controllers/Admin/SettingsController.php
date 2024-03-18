@@ -30,7 +30,9 @@ class SettingsController extends Controller
         $gptKey->model = $request->model;
         $gptKey->key = $request->key;
         $gptKey->product_prompt = $request->product_prompt;
+        $gptKey->is_image_compared = $request->has('imageCompare') ? 1 : 0;
         $gptKey->image_prompt = $request->image_prompt;
+        $gptKey->log_delete_days = $request->log_delete_days;
         $gptKey->save();
 
         $option = Option::where('key', 'product-url')->first();

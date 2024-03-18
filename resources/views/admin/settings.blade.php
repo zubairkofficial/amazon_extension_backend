@@ -84,6 +84,7 @@
                     data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
                 @endforeach
             </div>
+
         </div>
         <script>
             class ArgumentsHandler {
@@ -138,6 +139,12 @@
                 @endif
                 @endforeach
             </div>
+            <div>
+                <strong>Image Compare: </strong>
+                <input type="checkbox" id="imageCompareCheckbox" name="imageCompare"
+                    class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument" {{
+                    $gptKey->is_image_compared ? 'checked' : '' }}>
+            </div>
         </div>
         <script>
             new ArgumentsHandler('#image_prompt', '.image-prompt-argument');
@@ -148,6 +155,15 @@
         <label class="form-label" for="product_url">Products URL</label>
         <div class="form-control-wrap">
             <input class="form-control" id="product_url" name="product_url" value="{{ $productUrl }}">
+            <small class="text-danger"></small>
+        </div>
+    </div>
+
+    <div class="form-group mb-4">
+        <label class="form-label" for="log_delete_days">Log Delete Days</label>
+        <div class="form-control-wrap">
+            <input class="form-control" type="number" id="log_delete_days" name="log_delete_days"
+                value="{{ $gptKey->log_delete_days }}">
             <small class="text-danger"></small>
         </div>
     </div>

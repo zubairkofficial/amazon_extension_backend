@@ -8,15 +8,31 @@ use App\Models\Log;
 
 class DashboardController extends Controller
 {
-    public function fetchLogs()
+    public function fetchLogs(Request $request)
     {
-        $logs = Log::with('user')->get();
+        $searchQuery = $request->input('search', '');
+
+        $query = Log::query();
+
+        if (!empty ($searchQuery)) {
+            $query->where(function ($q) use ($searchQuery) {
+                $q->where('asin', 'LIKE', "%{$searchQuery}%")
+                    ->orWhere('prompt', 'LIKE', "%{$searchQuery}%")
+                    ->orWhere('summary', 'LIKE', "%{$searchQuery}%");
+                $q->orWhereHas('user', function ($query) use ($searchQuery) {
+                    $query->where('name', 'LIKE', "%{$searchQuery}%");
+                });
+            });
+        }
+
+        $logs = $query->with('user')->get();
+
         return response()->json($logs);
     }
+
     public function index()
     {
-        $logs = Log::with('user')->get();
-        return view('admin.dashboard', compact('logs'));
+        return view('admin.dashboard');
     }
 
     public function show($id)
@@ -42,7 +58,7 @@ class DashboardController extends Controller
         if ($string !== "[DONE]") {
             $decodes = json_decode($string, true);
             if ($decodes) {
-                if (isset($decodes['choices'][0]['delta']['content'])) {
+                if (isset ($decodes['choices'][0]['delta']['content'])) {
                     $output = $decodes['choices'][0]['delta']['content'];
                 } else {
                     $output = "";
