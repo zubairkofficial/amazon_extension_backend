@@ -51,6 +51,53 @@
             <small class="text-danger"></small>
         </div>
     </div>
+    <div class="form-group mb-4">
+        <label class="form-label" for="model">Iamge Compare Model</label>
+        <div class="form-control-wrap">
+            <select class="form-control" id="model" name="model">
+                <option value="gpt-4-vision-preview" @if($gptKey->
+                    image_model == 'gpt-4-vision-preview') selected @endif>
+                    gpt-4-vision-preview
+                </option>
+                <option value="gpt-4-1106-vision-preview" @if($gptKey->
+                    image_model == 'gpt-4-1106-vision-preview') selected @endif>
+                    gpt-4-1106-vision-preview
+                </option>
+                <option value="gpt-4-1106-preview" @if($gptKey->
+                    image_model == 'gpt-4-1106-preview') selected @endif>
+                    gpt-4-1106-preview
+                </option>
+                <option value="gpt-4-0125-preview" @if($gptKey->
+                    image_model == 'gpt-4-0125-preview') selected @endif>
+                    gpt-4-0125-preview
+                </option>
+                <option value="gpt-4-turbo-preview" @if($gptKey->
+                    image_model == 'gpt-4-turbo-preview') selected @endif>
+                    gpt-4-turbo-preview
+                </option>
+                <option value="gpt-4" @if($gptKey->image_model == 'gpt-4')
+                    selected @endif>
+                    gpt-4</option>
+                <option value="gpt-4-0613" @if($gptKey->image_model ==
+                    'gpt-4-0613') selected @endif>
+                    gpt-4-0613</option>
+                <option value="gpt-4-32k" @if($gptKey->image_model ==
+                    'gpt-4-32k') selected @endif>
+                    gpt-4-32k</option>
+                <option value="gpt-4-32k-0613" @if($gptKey->image_model ==
+                    'gpt-4-32k-0613') selected @endif>
+                    gpt-4-32k-0613</option>
+                <option value="gpt-3.5-turbo-0125" @if($gptKey->
+                    image_model == 'gpt-3.5-turbo-0125') selected @endif>
+                    gpt-3.5-turbo-0125</option>
+                <option value="gpt-3.5-turbo" @if($gptKey->image_model ==
+                    'gpt-3.5-turbo') selected @endif>
+                    gpt-3.5-turbo</option>
+
+            </select>
+            <small class="text-danger"></small>
+        </div>
+    </div>
 
     <div class="form-group mb-4">
         <label class="form-label" for="key">Key</label>

@@ -28,6 +28,7 @@ class SettingsController extends Controller
     {
         $gptKey = GptKey::first();
         $gptKey->model = $request->model;
+        $gptKey->image_model = $request->image_model;
         $gptKey->key = $request->key;
         $gptKey->product_prompt = $request->product_prompt;
         $gptKey->is_image_compared = $request->has('imageCompare') ? 1 : 0;

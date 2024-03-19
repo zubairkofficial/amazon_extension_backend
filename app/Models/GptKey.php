@@ -14,6 +14,7 @@ class GptKey extends Model
         'key',
         'prompt',
         'log_delete_days',
-        'is_image_compared'
+        'is_image_compared',
+        'image_model'
     ];
 }

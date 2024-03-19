@@ -20,7 +20,7 @@
                     <div class="card shadown-none">
                         <div class="card-body">
                             <div class="row g-3 gx-gs">
-                                <div class="col-md-12">
+                                <div class="col-md-12" id="tableData">
                                     <table id="data-table" class="table">
                                         <thead>
                                             <tr>
@@ -49,52 +49,67 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://pagination.js.org/dist/2.6.0/pagination.min.js"></script>
 <script>
     $(document).ready(function() {
         // Function to fetch and append data
-        function fetchData(searchQuery = '') {
+       function fetchData(searchQuery = '') {
             $.ajax({
-                url: '/admin/fetch-logs',
-                type: 'GET',
-                data: {search: searchQuery}, // Add this line to send the search query to the server
-                dataType: 'json',
-                success: function(response) {
-                    $('#data-table tbody').empty();
-                    if (response.length > 0) {
-                    response.forEach(function(log, index) {
-                    var row = `<tr>
-                        <td>${index + 1}</td>
-                        <td>${log.user.name}</td>
-                        <td>${log.asin}</td>
-                        <td>${log.prompt.length > 100 ? log.prompt.substring(0, 100) + '...' : log.prompt}</td>
-                        <td>${log.image_match.length > 100 ? log.image_match.substring(0, 100) + '...' : log.image_match}</td>
-                        <td>${log.summary.length > 100 ? log.summary.substring(0, 100) + '...' : log.summary}</td>
-                        <td>${moment(log.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">Actions</button>
-                                <form class="dropdown-menu">
-                                    <a class="dropdown-item" href="/admin/log/${log.id}">View</a>
-                                    <a class="dropdown-item" href="/admin/log/delete/${log.id}">Delete</a>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>`;
-                    $('#data-table tbody').append(row);
+            url: '/admin/fetch-logs',
+            type: 'GET',
+            data: {search: searchQuery},
+            dataType: 'json',
+            success: function(response) {
+            // Assuming `response` is the array of logs
+                if (response && response.length > 0) {
+                    // Initialize or refresh the pagination plugin
+                    $('#tableData').pagination({
+                        dataSource: response,
+                        pageSize: 10,
+                        showPageNumbers: false,
+                        showNavigator: true,
+                        callback: function(data, pagination) {
+                            // Clear existing table rows
+                            $('#data-table tbody').empty();
+
+                            // Append new rows based on the current page's data
+                            data.forEach(function(log, index) {
+                                var row = `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${log.user.name}</td>
+                                    <td>${log.asin}</td>
+                                    <td>${log.prompt.length > 100 ? log.prompt.substring(0, 100) + '...' : log.prompt}</td>
+                                    <td>${log.image_match.length >
+                                        100 ? log.image_match.substring(0, 100) + '...' : log.image_match}</td>
+                                    <td>${log.summary.length > 100 ? log.summary.substring(0, 100) + '...' : log.summary}</td>
+                                    <td>${moment(log.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                                aria-expanded="false">Actions</button>
+                                            <form class="dropdown-menu">
+                                                <a class="dropdown-item" href="/admin/log/${log.id}">View</a>
+                                                <a class="dropdown-item" href="/admin/log/delete/${log.id}">Delete</a>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>`;
+                                $('#data-table tbody').append(row);
+                            });
+                        }
                     });
-                    } else {
-                    var row = `<tr>
-                        <td colspan="7">No records found...</td>
-                    </tr>`;
-                    $('#data-table tbody').append(row);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
+                } else {
+                    // Show "No records found" if no data is returned
+                    $('#data-table tbody').html(`<tr>
+                        <td colspan="8">No records found...</td>
+                    </tr>`);
                 }
-            });
-        }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
 
         // Add event listener for the search input field
         $('#search').on('input', function() {

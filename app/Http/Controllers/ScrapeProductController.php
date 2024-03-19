@@ -271,7 +271,8 @@ class ScrapeProductController extends Controller
             $open_ai = new OpenAi($gptKey->key);
 
             $chat = $open_ai->chat([
-                "model" => 'gpt-4-vision-preview',
+                // "model" => 'gpt-4-vision-preview',
+                "model" => $gptKey->image_model,
                 "messages" => [
                     [
                         'role' => 'system',

@@ -12,6 +12,20 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('assets/dashboard/css/style.css') }}">
+    <style>
+        .paginationjs {
+            display: flex;
+        }
+
+        .paginationjs-pages>ul {
+            display: flex;
+        }
+
+        .paginationjs-pages>ul>li {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased">
