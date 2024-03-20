@@ -52,9 +52,9 @@
         </div>
     </div>
     <div class="form-group mb-4">
-        <label class="form-label" for="model">Iamge Compare Model</label>
+        <label class="form-label" for="image_model">Iamge Compare Model</label>
         <div class="form-control-wrap">
-            <select class="form-control" id="model" name="model">
+            <select class="form-control" id="image_model" name="image_model">
                 <option value="gpt-4-vision-preview" @if($gptKey->
                     image_model == 'gpt-4-vision-preview') selected @endif>
                     gpt-4-vision-preview
