@@ -69,10 +69,6 @@ class WebScraperService
                     case 'shippingcost':
                         $product[$selector['name']] = $this->scrapeContent($node, $selector['selector']);
                         break;
-                        $productTitle = $crawler->filter($selector['selector'])->each(function ($node) {
-                            return trim($node->text());
-                        });
-
                     case 'image':
                     case 'description':
                         $product[$selector['name']] = $this->scrapeContentById($node, $selector['selector']);
