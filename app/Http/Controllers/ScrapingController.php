@@ -17,11 +17,7 @@ class ScrapingController extends Controller
     public function scrape(Request $request)
     {
         $url = 'https://www.amazon.com/dp/'.$request->input('asin');
-        // Retrieve the 'tags' parameter from the request, ensuring it has a default value if not provided
-        $tags = $request->input('tags', []); // Assuming 'tags' is expected as an array. Adjust the default value as necessary
-
-        // Now pass both $url and $tags to scrapeData
-        $data = $this->scraper->scrapeData($url, $tags);
+        $data = $this->scraper->scrapeData($url);
 
         return response()->json($data);
     }
