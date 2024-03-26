@@ -25,7 +25,7 @@ class DashboardController extends Controller
             });
         }
 
-        $logs = $query->with('user')->get();
+        $logs = $query->with('user')->orderBy('id', 'DESC')->get();
 
         return response()->json($logs);
     }
