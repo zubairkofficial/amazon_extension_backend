@@ -141,7 +141,7 @@
             // Set a new interval
             fetchIntervalId = setInterval(function() {
                 fetchData(); // Call fetchData without parameters to get all data
-            }, 5000);
+            }, 1000);
         }
     });
 </script>
