@@ -22,6 +22,7 @@ class ScrapeProductController extends Controller
     {
         $products = $request->productList;
         $userId = $request->userId;
+
         $code = Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5);
 
         if (empty ($userId)) {
@@ -56,7 +57,7 @@ class ScrapeProductController extends Controller
             }
 
             DB::commit();
-            return response()->json(["message" => "Products saved and processed successfully", 'data' => $gptresponse['data']], 200);
+            return response()->json(["message" => "Products saved and processed successfully", 'data' => $gptresponse['data'],'tabId'=>$request->tabId], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["message" => "An unexpected error occurred", "error" => $e->getMessage()], 500);
