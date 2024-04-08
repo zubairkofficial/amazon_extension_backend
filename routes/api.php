@@ -4,6 +4,7 @@ use App\Http\Controllers\ScrapeProductController;
 use App\Http\Controllers\SelectorController;
 use App\Http\Controllers\ScrapingController;
 use App\Http\Controllers\Api\AmazonScraperController;
+use App\Http\Controllers\Api\ScapeCompareController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,5 +34,6 @@ Route::prefix('selectors')->group(function () {
 Route::get('test',function(){
     return $data = ['match'=>'Yes','Reason'=>'reason'];
 });
-Route::get('scrape', [ScrapingController::class, "scrape"]);
-Route::post('scrapeAmazon', [AmazonScraperController::class, "scrapeAmazon"]);
+// Route::get('scrape', [ScrapingController::class, "scrape"]);
+// Route::post('scrapeAmazon', [AmazonScraperController::class, "scrapeAmazon"]);
+Route::post('scrapecompare', [ScapeCompareController::class, "save"]);
