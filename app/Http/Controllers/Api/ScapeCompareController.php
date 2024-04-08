@@ -34,7 +34,10 @@ class ScapeCompareController extends Controller
         if ($response->getStatusCode() == 200) {
             $products = json_decode($response->getBody()->getContents(), true);
         }else{
-            return response()->json(["message" => "Product not found"], 400);
+            return response()->json(["message" => "Product not found"], 404);
+        }
+        if(count($products)==0){
+            return response()->json(["message" => "Data not scrape try again"], 404);
         }
         sleep(10);
 
