@@ -11,12 +11,22 @@ class ScrapeProduct extends Model
 
     protected $casts = [
         'dimension' => 'array',
+        'description' => 'array',
         'detailInfo' => 'array',
         'colorVariations' => 'array',
         'brandDetails' => 'array',
         'about_this_item' => 'array',
     ];
 
+    public function setDescriptionAttribute($value)
+    {
+        $this->attributes['description'] = json_encode($value, true);
+    }
+
+    public function getDescriptionAttribute($value)
+    {
+        return json_decode($value, true);
+    }
     public function setBrandDetailsAttribute($value)
     {
         $this->attributes['brandDetails'] = json_encode($value, true);
