@@ -24,7 +24,8 @@ class ScapeCompareController extends Controller
     {
 
         $client =new Client([
-            'base_uri' => 'http://127.0.0.1:4000',
+            // 'base_uri' => 'http://127.0.0.1:4000',
+            'base_uri' => 'http://13.60.37.153',
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
