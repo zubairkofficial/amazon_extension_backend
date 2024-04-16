@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1c70ec650dea5e026bdba007fdaae871
+class ComposerStaticInitb586f7ad08c8264f1569ed3a3225d651
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -380,8 +380,8 @@ class ComposerStaticInit1c70ec650dea5e026bdba007fdaae871
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -574,6 +574,8 @@ class ComposerStaticInit1c70ec650dea5e026bdba007fdaae871
         'App\\Http\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DashboardController.php',
         'App\\Http\\Controllers\\Admin\\SettingsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/SettingsController.php',
         'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
+        'App\\Http\\Controllers\\Api\\AmazonScraperController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/AmazonScraperController.php',
+        'App\\Http\\Controllers\\Api\\ScapeCompareController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ScapeCompareController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
         'App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/EmailVerificationNotificationController.php',
@@ -6755,9 +6757,9 @@ class ComposerStaticInit1c70ec650dea5e026bdba007fdaae871
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1c70ec650dea5e026bdba007fdaae871::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1c70ec650dea5e026bdba007fdaae871::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit1c70ec650dea5e026bdba007fdaae871::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb586f7ad08c8264f1569ed3a3225d651::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb586f7ad08c8264f1569ed3a3225d651::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb586f7ad08c8264f1569ed3a3225d651::$classMap;
 
         }, null, ClassLoader::class);
     }
