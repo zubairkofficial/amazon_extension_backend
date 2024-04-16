@@ -41,7 +41,7 @@ class ScapeCompareController extends Controller
         if(count($products)==0){
             return response()->json(["message" => "Data not scrape try again"], 404);
         }
-        sleep(10);
+        // sleep(10);
 
         $productId = $request->productId;
 
@@ -71,7 +71,7 @@ class ScapeCompareController extends Controller
                 $Ids[] = $scrapeProductResponse['id'];
             }
             $gptresponse = $this->gptresponse($request, $Ids, $productId);
-            sleep(10);
+            // sleep(10);
             if ($gptresponse['status'] === 'error') {
                 DB::rollBack();
                 return response()->json(["message" => $gptresponse['message']], 500);
