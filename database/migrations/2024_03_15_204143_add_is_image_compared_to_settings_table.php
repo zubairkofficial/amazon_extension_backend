@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('gpt_keys', function (Blueprint $table) {
+        Schema::table('settings', function (Blueprint $table) {
             $table->boolean('is_image_compared')->default(0);
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('gpt_keys', function (Blueprint $table) {
+        Schema::table('settings', function (Blueprint $table) {
             //
         });
     }

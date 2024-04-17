@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use App\Models\Option;
-use App\Models\GptKey;
+use App\Models\Setting;
 use App\Models\ScrapeProduct;
 use App\Models\SystemProduct;
 
@@ -16,9 +16,10 @@ class SettingsController extends Controller
     public function index()
     {
         return view("admin.settings", [
-            'gptKey' => GptKey::first(),
+            'setting' => Setting::first(),
             'user' => Auth::user(),
             'productUrl' => Option::where('key', 'product-url')->first()->value,
+            'fastapiUrl' => Option::where('key', 'fastapi-url')->first()->value,
             'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
             'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);
@@ -26,18 +27,22 @@ class SettingsController extends Controller
 
     public function update(Request $request)
     {
-        $gptKey = GptKey::first();
-        $gptKey->model = $request->model;
-        $gptKey->image_model = $request->image_model;
-        $gptKey->key = $request->key;
-        $gptKey->product_prompt = $request->product_prompt;
-        $gptKey->is_image_compared = $request->has('imageCompare') ? 1 : 0;
-        $gptKey->image_prompt = $request->image_prompt;
-        $gptKey->log_delete_days = $request->log_delete_days;
-        $gptKey->save();
+        $setting = Setting::first();
+        $setting->model = $request->model;
+        $setting->image_model = $request->image_model;
+        $setting->key = $request->key;
+        $setting->product_prompt = $request->product_prompt;
+        $setting->is_image_compared = $request->has('imageCompare') ? 1 : 0;
+        $setting->image_prompt = $request->image_prompt;
+        $setting->log_delete_days = $request->log_delete_days;
+        $setting->save();
 
         $option = Option::where('key', 'product-url')->first();
         $option->value = $request->product_url;
+        $option->save();
+
+        $option = Option::where('key', 'fastapi-url')->first();
+        $option->value = $request->fastapi_url;
         $option->save();
 
         $user = Auth::user();

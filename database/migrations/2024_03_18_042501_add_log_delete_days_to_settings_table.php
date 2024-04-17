@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('gpt_keys', function (Blueprint $table) {
-            $table->string('image_model');
+        Schema::table('settings', function (Blueprint $table) {
+            $table->integer('log_delete_days');
         });
     }
 
@@ -21,7 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('gpt_keys', function (Blueprint $table) {
+        Schema::table('settings', function (Blueprint $table) {
             //
         });
     }

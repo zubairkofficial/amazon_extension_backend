@@ -25,19 +25,11 @@ use App\Models\Log;
 Route::get('/', function () {
     return redirect('login');
 });
-// Route::get('/dashboard', function () {
-//     return view('home', ['logs' => Log::all()]);
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'user.check'])->group(function () {
     Route::get('/dashboard', function () { return view('home');})->name('dashboard');
-    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Route::get('/admin', [SettingController::class, 'index']);
-    Route::get('/setting', [SettingController::class, 'setting'])->name('setting');
-    // Route::post('/updateKey', [GPTKeyController::class, 'update'])->name('gptKey.update');
+    Route::get('/setting', function(){return view('setting');})->name('setting');
 });
 
 require __DIR__ . '/auth.php';

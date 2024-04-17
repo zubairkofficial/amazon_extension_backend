@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ScrapeProduct;
 use App\Models\SystemProduct;
 use App\Models\Log;
-use App\Models\GptKey;
+use App\Models\Setting;
 use Orhanerday\OpenAi\OpenAi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as StorageLog;
@@ -22,11 +22,9 @@ class ScapeCompareController extends Controller
 {
     public function save(Request $request)
     {
-
+        $fastApiUrl = Option::where('key', 'fastapi-url')->first()->value;
         $client =new Client([
-            // 'base_uri' => 'http://127.0.0.1:4000',
-            // 'base_uri' => 'http://13.60.37.153',
-            'base_uri' => 'http://listingapp.netray.org:8897',
+            'base_uri' => $fastApiUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
@@ -41,7 +39,7 @@ class ScapeCompareController extends Controller
         if(count($products)==0){
             return response()->json(["message" => "Data not scrape try again"], 404);
         }
-        // sleep(10);
+        
 
         $productId = $request->productId;
 
@@ -71,7 +69,7 @@ class ScapeCompareController extends Controller
                 $Ids[] = $scrapeProductResponse['id'];
             }
             $gptresponse = $this->gptresponse($request, $Ids, $productId);
-            // sleep(10);
+            
             if ($gptresponse['status'] === 'error') {
                 DB::rollBack();
                 return response()->json(["message" => $gptresponse['message']], 500);
@@ -143,18 +141,18 @@ class ScapeCompareController extends Controller
     {
         try {
             foreach ($data as $id) {
-                // $gptKey = GptKey::first();
-                $gptKey = GptKey::firstOrFail();
+                // $setting = Setting::first();
+                $setting = Setting::firstOrFail();
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
 
-                $content = $this->substituteValues($gptKey->product_prompt, $scrapeProduct, $systemProduct);
+                $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
                 // StorageLog::info($content);
-                $open_ai = new OpenAi($gptKey->key);
+                $open_ai = new OpenAi($setting->key);
 
                 $chat = $open_ai->chat([
-                    "model" => $gptKey->model,
+                    "model" => $setting->model,
                     "messages" => [
                         [
                             'role' => 'system',
@@ -239,14 +237,14 @@ class ScapeCompareController extends Controller
     public function gptVisionResponse($scrapeProduct, $systemProduct)
     {
         try {
-            $gptKey = GptKey::first();
-            $content = $this->substituteValues($gptKey->image_prompt, $scrapeProduct, $systemProduct);
+            $setting = Setting::first();
+            $content = $this->substituteValues($setting->image_prompt, $scrapeProduct, $systemProduct);
             // StorageLog::info($content);
-            $open_ai = new OpenAi($gptKey->key);
+            $open_ai = new OpenAi($setting->key);
 
             $chat = $open_ai->chat([
                 // "model" => 'gpt-4-vision-preview',
-                "model" => $gptKey->image_model,
+                "model" => $setting->image_model,
                 "messages" => [
                     [
                         'role' => 'system',

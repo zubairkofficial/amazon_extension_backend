@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ScrapeProduct;
 use App\Models\SystemProduct;
 use App\Models\Log;
-use App\Models\GptKey;
+use App\Models\Setting;
 use Orhanerday\OpenAi\OpenAi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as StorageLog;
@@ -148,18 +148,18 @@ class ScrapeProductController extends Controller
     {
         try {
             foreach ($data as $id) {
-                // $gptKey = GptKey::first();
-                $gptKey = GptKey::firstOrFail();
+                // $setting = Setting::first();
+                $setting = Setting::firstOrFail();
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
 
-                $content = $this->substituteValues($gptKey->product_prompt, $scrapeProduct, $systemProduct);
+                $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
                 // StorageLog::info($content);
-                $open_ai = new OpenAi($gptKey->key);
+                $open_ai = new OpenAi($setting->key);
 
                 $chat = $open_ai->chat([
-                    "model" => $gptKey->model,
+                    "model" => $setting->model,
                     "messages" => [
                         [
                             'role' => 'system',
@@ -201,7 +201,7 @@ class ScrapeProductController extends Controller
                 $log->summary = $summary;
                 $log->image_match = "Image not compared"; // Default value
 
-                if ($gptKey->is_image_compared) {
+                if ($setting->is_image_compared) {
                     $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
                     if ($image_match['status'] === 'error') {
                         return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
@@ -266,14 +266,14 @@ class ScrapeProductController extends Controller
     public function gptVisionResponse($scrapeProduct, $systemProduct)
     {
         try {
-            $gptKey = GptKey::first();
-            $content = $this->substituteValues($gptKey->image_prompt, $scrapeProduct, $systemProduct);
+            $setting = Setting::first();
+            $content = $this->substituteValues($setting->image_prompt, $scrapeProduct, $systemProduct);
             // StorageLog::info($content);
-            $open_ai = new OpenAi($gptKey->key);
+            $open_ai = new OpenAi($setting->key);
 
             $chat = $open_ai->chat([
                 // "model" => 'gpt-4-vision-preview',
-                "model" => $gptKey->image_model,
+                "model" => $setting->image_model,
                 "messages" => [
                     [
                         'role' => 'system',
@@ -321,8 +321,8 @@ class ScrapeProductController extends Controller
     public function testgptapi()
     {
         try {
-            $gptKey = GptKey::first();
-            $open_ai = new OpenAi($gptKey->key);
+            $setting = Setting::first();
+            $open_ai = new OpenAi($setting->key);
 
             $content = json_encode([
                 [
