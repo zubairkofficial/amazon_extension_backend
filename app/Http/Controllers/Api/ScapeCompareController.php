@@ -185,7 +185,7 @@ class ScapeCompareController extends Controller
 
                 $log = [
                             "asin" => $scrapeProduct->asin,
-                            "prompt" => $content,
+                            // "prompt" => $content,
                             "summary" => $summary,
                             "image_match" => "Image not compared"
                         ];
