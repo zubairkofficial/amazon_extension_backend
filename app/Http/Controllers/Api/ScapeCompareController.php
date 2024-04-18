@@ -42,13 +42,17 @@ class ScapeCompareController extends Controller
             return response()->json(["message" => "Product not found"], 404);
         }
         if(count($products)==0){
-            $response = $this->fastAp->get("/proxyScrape?asins={$request->asins}");
-            if ($response->getStatusCode() == 200) {
-                $products = json_decode($response->getBody()->getContents(), true);
+            if($request->is_retried){
+                $response = $this->fastAp->get("/proxyScrape?asins={$request->asins}");
+                if ($response->getStatusCode() == 200) {
+                    $products = json_decode($response->getBody()->getContents(), true);
+                }else{
+                    return response()->json(["message" => "Product not found"], 404);
+                }
+                if(count($products)==0){
+                    return response()->json(["message" => "Data not scrape try again"], 404);
+                }
             }else{
-                return response()->json(["message" => "Product not found"], 404);
-            }
-            if(count($products)==0){
                 return response()->json(["message" => "Data not scrape try again"], 404);
             }
         }
