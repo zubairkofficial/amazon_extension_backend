@@ -51,7 +51,7 @@ class ScapeCompareController extends Controller
                 return response()->json(["message" => "Product not found"], 404);
             }
             if(count($products)==0){
-                return response()->json(["message" => "Data not scrape try again"], 404);
+                return response()->json(["message" => "No Data return from FastApi"], 404);
             }
         }
         
@@ -78,7 +78,7 @@ class ScapeCompareController extends Controller
                 $scrapeProductResponse = $this->saveScrapeProduct($product, $code, $productId);
                 if ($scrapeProductResponse['status'] === 'error') {
                     DB::rollBack();
-                    return response()->json(["message" => $scrapeProductResponse['message']], 500);
+                    return response()->json(["message" => $scrapeProductResponse['message']]);
                 }
                 $Ids[] = $scrapeProductResponse['id'];
             }
@@ -86,7 +86,7 @@ class ScapeCompareController extends Controller
             
             if ($gptresponse['status'] === 'error') {
                 DB::rollBack();
-                return response()->json(["message" => $gptresponse['message']], 500);
+                return response()->json(["message" => $gptresponse['message']]);
             }
 
             DB::commit();
@@ -121,7 +121,7 @@ class ScapeCompareController extends Controller
         } catch (\Exception $e) {
             // StorageLog::error("An error occurred while saving scrape product: " . $e->getMessage());
             // return ['status' => 'error', 'message' => 'Failed to save scrape product'];
-            return ['status' => 'error', 'message' => $e->getMessage()];
+            return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
         }
     }
 
@@ -209,7 +209,7 @@ class ScapeCompareController extends Controller
         } catch (\Exception $e) {
             // StorageLog::error("An error occurred:  " . $e->getMessage());
             // return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
-            return ['status' => 'error', 'message' => $e->getMessage()];
+            return ['status' => 'error', 'message' => 'Chatgpt error:'.$e->getMessage()];
         }
     }
 
@@ -247,7 +247,7 @@ class ScapeCompareController extends Controller
             return ['status' => 'success'];
         } catch (\Exception $e) {
             // return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
-            return ['status' => 'error', 'message' => $e->getMessage(), 'code' => 500];
+            return ['status' => 'error', 'message' => '.System Api error:'.$e->getMessage(), 'code' => 500];
         }
     }
 
@@ -287,7 +287,7 @@ class ScapeCompareController extends Controller
         } catch (\Exception $e) {
             // StorageLog::info($e->getMessage());
             // return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
-            return ['status' => 'error', 'message' => $e->getMessage()];
+            return ['status' => 'error', 'message' => 'Chatgpt Imgae compage error:'.$e->getMessage()];
         }
     }
 
