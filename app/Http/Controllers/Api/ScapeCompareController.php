@@ -67,7 +67,6 @@ class ScapeCompareController extends Controller
         DB::beginTransaction();
 
         try {
-            // $systemProductResponse = $this->dispatchSystemProduct($productId, $code);
             $systemProductResponse = $this->systemProduct($productId, $code);
             if ($systemProductResponse['status'] === 'error') {
                 DB::rollBack();
@@ -121,7 +120,8 @@ class ScapeCompareController extends Controller
             return ['status' => 'success', 'id' => $scrapeproduct->id];
         } catch (\Exception $e) {
             // StorageLog::error("An error occurred while saving scrape product: " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'Failed to save scrape product'];
+            // return ['status' => 'error', 'message' => 'Failed to save scrape product'];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
@@ -208,7 +208,8 @@ class ScapeCompareController extends Controller
             return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
         } catch (\Exception $e) {
             // StorageLog::error("An error occurred:  " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
+            // return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
@@ -245,7 +246,8 @@ class ScapeCompareController extends Controller
             }
             return ['status' => 'success'];
         } catch (\Exception $e) {
-            return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
+            // return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
+            return ['status' => 'error', 'message' => $e->getMessage(), 'code' => 500];
         }
     }
 
@@ -284,7 +286,8 @@ class ScapeCompareController extends Controller
             return ['status' => 'success', 'data' => $response];
         } catch (\Exception $e) {
             // StorageLog::info($e->getMessage());
-            return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
+            // return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
