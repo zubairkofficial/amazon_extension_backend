@@ -247,7 +247,7 @@ class ScapeCompareController extends Controller
             return ['status' => 'success'];
         } catch (\Exception $e) {
             // return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
-            return ['status' => 'error', 'message' => '.System Api error:'.$e->getMessage(), 'code' => 500];
+            return ['status' => 'error', 'message' => 'System Api error:'.$e->getMessage(), 'code' => 500];
         }
     }
 
