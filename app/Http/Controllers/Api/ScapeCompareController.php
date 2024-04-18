@@ -41,18 +41,16 @@ class ScapeCompareController extends Controller
         }else{
             return response()->json(["message" => "Product not found"], 404);
         }
+        $is_retried=false;
         if(count($products)==0){
-            if($request->is_retried){
-                $response = $this->fastAp->get("/proxyScrape?asins={$request->asins}");
-                if ($response->getStatusCode() == 200) {
-                    $products = json_decode($response->getBody()->getContents(), true);
-                }else{
-                    return response()->json(["message" => "Product not found"], 404);
-                }
-                if(count($products)==0){
-                    return response()->json(["message" => "Data not scrape try again"], 404);
-                }
+            $response = $this->fastAp->get("/proxyScrape?asins={$request->asins}");
+            if ($response->getStatusCode() == 200) {
+                $products = json_decode($response->getBody()->getContents(), true);
+                $is_retried=true;
             }else{
+                return response()->json(["message" => "Product not found"], 404);
+            }
+            if(count($products)==0){
                 return response()->json(["message" => "Data not scrape try again"], 404);
             }
         }
@@ -85,7 +83,7 @@ class ScapeCompareController extends Controller
                 }
                 $Ids[] = $scrapeProductResponse['id'];
             }
-            $gptresponse = $this->gptresponse($request, $Ids, $productId);
+            $gptresponse = $this->gptresponse($request, $Ids, $productId,$is_retried);
             
             if ($gptresponse['status'] === 'error') {
                 DB::rollBack();
@@ -154,7 +152,7 @@ class ScapeCompareController extends Controller
         return $prompt;
     }
 
-    public function gptresponse(Request $request, $data, $productId)
+    public function gptresponse(Request $request, $data, $productId,$is_retried)
     {
         try {
             foreach ($data as $id) {
@@ -190,6 +188,7 @@ class ScapeCompareController extends Controller
                 $log = [
                             "asin" => $scrapeProduct->asin,
                             // "prompt" => $content,
+                            "is_retried"=>$is_retried,
                             "summary" => $summary,
                             "image_match" => "Image not compared"
                         ];
