@@ -19,25 +19,38 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 class ScapeCompareController extends Controller
-{
-    public function save(Request $request)
-    {
+{   
+    protected $fastAp;
+    
+    public function __construct(){
         $fastApiUrl = Option::where('key', 'fastapi-url')->first()->value;
-        $client =new Client([
+        $this->fastAp=new Client([
             'base_uri' => $fastApiUrl,
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
         ]);
 
-        $response = $client->get("/scrape?asins={$request->asins}");
+    }
+
+    public function save(Request $request)
+    {
+        $response = $this->fastAp->get("/scrape?asins={$request->asins}");
         if ($response->getStatusCode() == 200) {
             $products = json_decode($response->getBody()->getContents(), true);
         }else{
             return response()->json(["message" => "Product not found"], 404);
         }
         if(count($products)==0){
-            return response()->json(["message" => "Data not scrape try again"], 404);
+            $response = $this->fastAp->get("/proxyScrape?asins={$request->asins}");
+            if ($response->getStatusCode() == 200) {
+                $products = json_decode($response->getBody()->getContents(), true);
+            }else{
+                return response()->json(["message" => "Product not found"], 404);
+            }
+            if(count($products)==0){
+                return response()->json(["message" => "Data not scrape try again"], 404);
+            }
         }
         
 
