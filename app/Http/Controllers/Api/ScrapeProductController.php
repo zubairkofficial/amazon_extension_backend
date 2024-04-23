@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ScrapeProduct;
 use App\Models\SystemProduct;
@@ -99,8 +100,9 @@ class ScrapeProductController extends Controller
             $createdId = $scrapeproduct->id;
             return ['status' => 'success', 'id' => $createdId];
         } catch (\Exception $e) {
-            // StorageLog::error("An error occurred: line:98 " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'Failed to save scrape product'];
+            // StorageLog::error("An error occurred while saving scrape product: " . $e->getMessage());
+            // return ['status' => 'error', 'message' => 'Failed to save scrape product'];
+            return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
         }
     }
 
@@ -218,7 +220,8 @@ class ScrapeProductController extends Controller
             return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
         } catch (\Exception $e) {
             // StorageLog::error("An error occurred:  " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
+            // return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
+            return ['status' => 'error', 'message' => 'Chatgpt error:'.$e->getMessage()];
         }
     }
 
@@ -258,7 +261,8 @@ class ScrapeProductController extends Controller
             return ['status' => 'success'];
         } catch (\Exception $e) {
             // StorageLog::error("An error occurred:" . $e->getMessage());
-            return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
+            // return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
+            return ['status' => 'error', 'message' => 'System Api error:'.$e->getMessage(), 'code' => 500];
         }
     }
 
@@ -301,7 +305,8 @@ class ScrapeProductController extends Controller
             return ['status' => 'success', 'data' => $response];
         } catch (\Exception $e) {
             // StorageLog::info($e->getMessage());
-            return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
+            // return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
+            return ['status' => 'error', 'message' => 'Chatgpt Imgae compage error:'.$e->getMessage()];
         }
     }
 

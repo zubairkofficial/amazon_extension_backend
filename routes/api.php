@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ScrapeProductController;
+use App\Http\Controllers\Api\ScrapeProductController;
 use App\Http\Controllers\SelectorController;
 use App\Http\Controllers\Api\ScapeCompareController;
 use Illuminate\Http\Request;
