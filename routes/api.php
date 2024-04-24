@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ScrapeProductController;
 use App\Http\Controllers\SelectorController;
 use App\Http\Controllers\Api\ScapeCompareController;
+use App\Http\Controllers\Api\ErpProductCompareController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +30,5 @@ Route::prefix('scrapeProduct')->group(function () {
 Route::prefix('selectors')->group(function () {
     Route::get('all', [SelectorController::class, 'getall']);
 });
-Route::get('test',function(){
-    return $data = ['match'=>'Yes','Reason'=>'reason'];
-});
 Route::post('scrapecompare', [ScapeCompareController::class, "save"]);
+Route::post('erpcompare', [ErpProductCompareController::class, "save"]);

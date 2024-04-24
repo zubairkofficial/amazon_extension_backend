@@ -18,44 +18,11 @@ use Illuminate\Support\Str;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class ScapeCompareController extends Controller
-{   
-    protected $fastAp;
-    
-    public function __construct(){
-        $fastApiUrl = Option::where('key', 'fastapi-url')->first()->value;
-        $this->fastAp=new Client([
-            'base_uri' => $fastApiUrl,
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
-
-    }
-
+class ErpProductCompareController extends Controller
+{
     public function save(Request $request)
     {
-        $response = $this->fastAp->get("/scrape?asins={$request->asins}");
-        if ($response->getStatusCode() == 200) {
-            $products = json_decode($response->getBody()->getContents(), true);
-        }else{
-            return response()->json(["message" => "Product not found"], 404);
-        }
-        $is_retried=false;
-        if(count($products)==0){
-            $response = $this->fastAp->get("/proxyScrape?asins={$request->asins}");
-            if ($response->getStatusCode() == 200) {
-                $products = json_decode($response->getBody()->getContents(), true);
-                $is_retried=true;
-            }else{
-                return response()->json(["message" => "Product not found"], 404);
-            }
-            if(count($products)==0){
-                return response()->json(["message" => "No Data return from FastApi"], 404);
-            }
-        }
-        
-
+        $product = $request->product;     
         $productId = $request->productId;
 
         $code = Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5) . "-" . Str::random(5);
@@ -73,16 +40,14 @@ class ScapeCompareController extends Controller
                 return response()->json(["message" => $systemProductResponse['message']], $systemProductResponse['code']);
             }
 
-            $Ids = [];
-            foreach ($products as $product) {
-                $scrapeProductResponse = $this->saveScrapeProduct($product, $code, $productId);
-                if ($scrapeProductResponse['status'] === 'error') {
-                    DB::rollBack();
-                    return response()->json(["message" => $scrapeProductResponse['message']]);
-                }
-                $Ids[] = $scrapeProductResponse['id'];
+            $scrapeProductResponse = $this->saveErpProduct($product, $code, $productId);
+            if ($scrapeProductResponse['status'] === 'error') {
+                DB::rollBack();
+                return response()->json(["message" => $scrapeProductResponse['message']]);
             }
-            $gptresponse = $this->gptresponse($request, $Ids, $productId,$is_retried);
+            $Id = $scrapeProductResponse['id'];
+
+            $gptresponse = $this->gptresponse($request, $Id, $productId);
             
             if ($gptresponse['status'] === 'error') {
                 DB::rollBack();
@@ -97,30 +62,28 @@ class ScapeCompareController extends Controller
         }
     }
 
-    protected function saveScrapeProduct($product, $code, $productId)
+    protected function saveErpProduct($product, $code, $productId)
     {
         try {
             $scrapeproduct = new ScrapeProduct();
             $scrapeproduct->title = $product['title'] ?? "";
-            $scrapeproduct->price = $product['product_price'] ?? 0;
-            $scrapeproduct->unit = $product['price'] ?? "$";
+            $scrapeproduct->price = $product['price'] ?? 0;
+            $scrapeproduct->unit = $product['unit'] ?? "$";
             $scrapeproduct->asin = $product['asin'] ?? "";
-            $scrapeproduct->priceUnit = $product['product_price'] ?? "0. $";
-            $scrapeproduct->image = $product['landingImage'] ?? '';
-            $scrapeproduct->colorVariations = $product['AvailableColors'] ?? [];
+            $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
+            $scrapeproduct->image = $product['image'] ?? '';
+            $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
             $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
             $scrapeproduct->dimension = $product['dimension'] ?? [];
-            $scrapeproduct->shippingCost = $product['shipping_cost'] ?? "";
-            $scrapeproduct->about_this_item = $product['feature_bullets'] ?? [];
-            $scrapeproduct->detailInfo = $product['prodDetails'] ?? [];
+            $scrapeproduct->shippingCost = $product['shippingCost'] ?? "";
+            $scrapeproduct->about_this_item = $product['about_this_item'] ?? [];
+            $scrapeproduct->detailInfo = $product['detailInfo'] ?? [];
             $scrapeproduct->description = $product['description'] ?? "";
             $scrapeproduct->code = $code;
             $scrapeproduct->save();
 
             return ['status' => 'success', 'id' => $scrapeproduct->id];
         } catch (\Exception $e) {
-            // StorageLog::error("An error occurred while saving scrape product: " . $e->getMessage());
-            // return ['status' => 'error', 'message' => 'Failed to save scrape product'];
             return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
         }
     }
@@ -142,7 +105,6 @@ class ScapeCompareController extends Controller
 
         foreach ($systemArguments as $systemArgument) {
             $value = $systemProduct->$systemArgument;
-            // Same check for system product arguments
             if (is_array($value)) {
                 $value = json_encode($value, JSON_PRETTY_PRINT);
             }
@@ -152,10 +114,9 @@ class ScapeCompareController extends Controller
         return $prompt;
     }
 
-    public function gptresponse(Request $request, $data, $productId,$is_retried)
+    public function gptresponse(Request $request, $id, $productId)
     {
         try {
-            foreach ($data as $id) {
                 // $setting = Setting::first();
                 $setting = Setting::firstOrFail();
                 $scrapeProduct = ScrapeProduct::find($id);
@@ -186,9 +147,6 @@ class ScapeCompareController extends Controller
                 $summary = $d->choices[0]->message->content;
 
                 $log = [
-                            "asin" => $scrapeProduct->asin,
-                            // "prompt" => $content,
-                            "is_retried"=>$is_retried,
                             "summary" => $summary,
                             "image_match" => "Image not compared"
                         ];
@@ -204,11 +162,8 @@ class ScapeCompareController extends Controller
                 ScrapeProduct::find($id)->delete();
                 SystemProduct::where('code', $scrapeProduct->code)->first()->delete();
 
-            }
             return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
         } catch (\Exception $e) {
-            // StorageLog::error("An error occurred:  " . $e->getMessage());
-            // return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
             return ['status' => 'error', 'message' => 'Chatgpt error:'.$e->getMessage()];
         }
     }
@@ -246,7 +201,6 @@ class ScapeCompareController extends Controller
             }
             return ['status' => 'success'];
         } catch (\Exception $e) {
-            // return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
             return ['status' => 'error', 'message' => 'System Api error:'.$e->getMessage(), 'code' => 500];
         }
     }
@@ -285,8 +239,6 @@ class ScapeCompareController extends Controller
             $data = $this->formatJsonContent($response);
             return ['status' => 'success', 'data' => $response];
         } catch (\Exception $e) {
-            // StorageLog::info($e->getMessage());
-            // return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
             return ['status' => 'error', 'message' => 'Chatgpt Imgae compage error:'.$e->getMessage()];
         }
     }
@@ -303,5 +255,4 @@ class ScapeCompareController extends Controller
 
         return $content;
     }
-
 }
