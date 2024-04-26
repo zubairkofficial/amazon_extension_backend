@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('scrape_products', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->longText('title');
             $table->string('asin');
             $table->string('priceUnit');
             $table->string('unit');

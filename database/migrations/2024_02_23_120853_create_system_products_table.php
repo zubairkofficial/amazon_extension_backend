@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('system_products', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-            $table->string('title');
+            $table->longText('title');
             $table->text('description');
             $table->string('mpn');
             $table->string('UPC');
