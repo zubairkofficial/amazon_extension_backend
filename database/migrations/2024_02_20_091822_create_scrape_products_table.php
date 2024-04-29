@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('unit');
             $table->string('price');
             $table->string('image');
+            $table->longText('categories');
             $table->json('colorVariations');
             $table->json('brandDetails');
             $table->json('dimension');

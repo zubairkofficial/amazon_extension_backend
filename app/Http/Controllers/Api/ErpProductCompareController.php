@@ -72,6 +72,7 @@ class ErpProductCompareController extends Controller
             $scrapeproduct->asin = $product['asin'] ?? "";
             $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
             $scrapeproduct->image = $product['image'] ?? '';
+            $scrapeproduct->categories = $product['categories'] ?? '';
             $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
             $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
             $scrapeproduct->dimension = $product['dimension'] ?? [];
