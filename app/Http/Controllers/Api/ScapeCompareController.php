@@ -110,6 +110,7 @@ class ScapeCompareController extends Controller
             $scrapeproduct->colorVariations = $product['AvailableColors'] ?? [];
             $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
             $scrapeproduct->dimension = $product['dimension'] ?? [];
+            $scrapeproduct->manufacturer = $product['manufacturer'] ?? [];
             $scrapeproduct->shippingCost = $product['shipping_cost'] ?? "";
             $scrapeproduct->about_this_item = $product['feature_bullets'] ?? [];
             $scrapeproduct->detailInfo = $product['prodDetails'] ?? [];

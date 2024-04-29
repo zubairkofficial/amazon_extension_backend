@@ -11,6 +11,7 @@ class ScrapeProduct extends Model
 
     protected $casts = [
         'dimension' => 'array',
+        'manufacturer' => 'array',
         'description' => 'array',
         'detailInfo' => 'array',
         'colorVariations' => 'array',
@@ -72,6 +73,15 @@ class ScrapeProduct extends Model
     }
 
     public function getDetailInfoAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+    public function setManufacturerAttribute($value)
+    {
+        $this->attributes['manufacturer'] = json_encode($value, true);
+    }
+
+    public function getManufacturerAttribute($value)
     {
         return json_decode($value, true);
     }

@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->json('colorVariations');
             $table->json('brandDetails');
             $table->json('dimension');
+            $table->json('manufacturer');
             $table->json('detailInfo');
             $table->text('description');
             $table->text('about_this_item');

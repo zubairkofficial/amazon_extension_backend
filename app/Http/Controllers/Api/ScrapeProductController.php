@@ -82,19 +82,20 @@ class ScrapeProductController extends Controller
     {
         try {
             $scrapeproduct = new ScrapeProduct();
-            $scrapeproduct->title = isset ($product['title']) ? $product['title'] : "";
-            $scrapeproduct->price = isset ($product['price']) ? $product['price'] : 0;
-            $scrapeproduct->unit = isset ($product['unit']) ? $product['unit'] : "$";
-            $scrapeproduct->asin = isset ($product['asin']) ? $product['asin'] : "";
-            $scrapeproduct->priceUnit = isset ($product['priceUnit']) ? $product['priceUnit'] : "0. $";
-            $scrapeproduct->image = isset ($product['image']) ? $product['image'] : '';
-            $scrapeproduct->colorVariations = isset ($product['colorVariations']) ? $product['colorVariations'] : [];
-            $scrapeproduct->brandDetails = isset ($product['brandDetails']) ? $product['brandDetails'] : [];
-            $scrapeproduct->dimension = isset ($product['dimension']) ? $product['dimension'] : [];
-            $scrapeproduct->shippingCost = isset ($product['shippingCost']) ? $product['shippingCost'] : "";
-            $scrapeproduct->about_this_item = isset ($product['about_this_item']) ? $product['about_this_item'] : "";
-            $scrapeproduct->detailInfo = isset ($product['detailInfo']) ? $product['detailInfo'] : [];
-            $scrapeproduct->description = isset ($product['description']) ? $product['description'] : "";
+            $scrapeproduct->title = $product['title'] ?? "";
+            $scrapeproduct->price = $product['price'] ?? 0;
+            $scrapeproduct->unit = $product['unit'] ?? "$";
+            $scrapeproduct->asin = $product['asin'] ?? "";
+            $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
+            $scrapeproduct->image = $product['image'] ?? '';
+            $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
+            $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
+            $scrapeproduct->dimension = $product['dimension'] ?? [];
+            $scrapeproduct->manufacturer = $product['manufacturer'] ?? [];
+            $scrapeproduct->shippingCost = $product['shippingCost'] ?? "";
+            $scrapeproduct->about_this_item = $product['about_this_item'] ?? "";
+            $scrapeproduct->detailInfo = $product['detailInfo'] ?? [];
+            $scrapeproduct->description = $product['description'] ?? "";
             $scrapeproduct->code = $code;
             $scrapeproduct->save();
             $createdId = $scrapeproduct->id;
