@@ -113,7 +113,7 @@
         function checkInactivity() {
             var currentTime = new Date();
             if ((currentTime - lastInteractionTime) > 2000) {
-                startFetchInterval();
+                fetchData();
             }
         }
 
