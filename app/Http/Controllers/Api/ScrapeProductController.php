@@ -89,7 +89,7 @@ class ScrapeProductController extends Controller
             $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
             $scrapeproduct->image = $product['image'] ?? '';
             $scrapeproduct->categories = $product['categories'] ?? '';
-            $scrapeproduct->size = $product['size'] ?? '';
+            $scrapeproduct->sizes = $product['sizes'] ?? '';
             $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
             $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
             $scrapeproduct->dimension = $product['dimension'] ?? [];
@@ -175,7 +175,7 @@ class ScrapeProductController extends Controller
                             'content' => $content,
                         ],
                     ],
-                    'temperature' => 1,
+                    'temperature' => $setting->model_temperature,
                     // 'max_tokens' => 130,
                 ]);
 
@@ -292,7 +292,7 @@ class ScrapeProductController extends Controller
                         'content' => $content,
                     ],
                 ],
-                'temperature' => 1,
+                'temperature' => $setting->image_model_temperature,
                 'max_tokens' => 300,
                 "stream" => false,
             ]);
@@ -364,7 +364,7 @@ class ScrapeProductController extends Controller
                         'content' => $content,
                     ],
                 ],
-                'temperature' => 1,
+                'temperature' => $setting->model,
                 'max_tokens' => 300,
                 "stream" => false,
             ]);

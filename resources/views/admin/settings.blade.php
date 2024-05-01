@@ -51,6 +51,14 @@
             <small class="text-danger"></small>
         </div>
     </div>
+
+    <div class="form-group mb-4">
+        <label class="form-label" for="model_temperature">Model Temperature</label>
+        <div class="form-control-wrap">
+            <input class="form-control" id="model_temperature" name="model_temperature" type="text" pattern="^(0(\.\d+)?|1(\.0+)?)$" value="{{ old('model_temperature',$setting->model_temperature) }}" required />
+            <small id="model_temperature_error" class="text-danger"></small>
+        </div>
+    </div>
     <div class="form-group mb-4">
         <label class="form-label" for="image_model">Iamge Compare Model</label>
         <div class="form-control-wrap">
@@ -99,6 +107,13 @@
         </div>
     </div>
 
+    <div class="form-group mb-4">
+        <label class="form-label" for="image_model_temperature">Image Model Temperature</label>
+        <div class="form-control-wrap">
+            <input class="form-control" id="image_model_temperature" name="image_model_temperature" type="text" pattern="^(0(\.\d+)?|1(\.0+)?)$" value="{{ old('image_model_temperature',$setting->image_model_temperature) }}" required />
+            <small id="image_model_temperature_error" class="text-danger"></small>
+        </div>
+    </div>
     <div class="form-group mb-4">
         <label class="form-label" for="key">Key</label>
         <div class="form-control-wrap">
@@ -229,5 +244,26 @@
     </div>
 
 </form>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function validateInputPattern(inputElement, errorElement) {
+            inputElement.addEventListener('input', function () {
+                if (!inputElement.checkValidity()) {
+                    errorElement.textContent = 'Please enter a value between 0 and 1. Decimals are allowed.';
+                } else {
+                    errorElement.textContent = '';
+                }
+            });
+        }
+
+        var imageInput = document.getElementById('image_model_temperature');
+        var imageError = document.getElementById('image_model_temperature_error');
+        validateInputPattern(imageInput, imageError); 
+
+        var modelInput = document.getElementById('model_temperature');
+        var modelError = document.getElementById('model_temperature_error');
+        validateInputPattern(modelInput, modelError); 
+    });
+</script>
 
 @endsection

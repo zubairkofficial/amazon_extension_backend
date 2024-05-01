@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('price');
             $table->string('image');
             $table->longText('categories');
-            $table->longText('size');
+            $table->longText('sizes');
             $table->json('colorVariations');
             $table->json('brandDetails');
             $table->json('dimension');

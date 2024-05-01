@@ -108,7 +108,7 @@ class ScapeCompareController extends Controller
             $scrapeproduct->priceUnit = $product['product_price'] ?? "0. $";
             $scrapeproduct->image = $product['landingImage'] ?? '';
             $scrapeproduct->categories = $product['categories'] ?? '';
-            $scrapeproduct->size = $product['size'] ?? '';
+            $scrapeproduct->sizes = $product['sizes'] ?? '';
             $scrapeproduct->colorVariations = $product['AvailableColors'] ?? [];
             $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
             $scrapeproduct->dimension = $product['dimension'] ?? [];
@@ -181,7 +181,7 @@ class ScapeCompareController extends Controller
                             'content' => $content,
                         ],
                     ],
-                    'temperature' => 1,
+                    'temperature' => $setting->model_temperature,
                 ]);
 
                 $d = json_decode($chat);
@@ -277,7 +277,7 @@ class ScapeCompareController extends Controller
                         'content' => $content,
                     ],
                 ],
-                'temperature' => 1,
+                'temperature' => $setting->image_model_temperature,
                 'max_tokens' => 300,
                 "stream" => false,
             ]);

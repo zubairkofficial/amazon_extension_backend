@@ -29,7 +29,9 @@ class SettingsController extends Controller
     {
         $setting = Setting::first();
         $setting->model = $request->model;
+        $setting->model_temperature = $request->model_temperature;
         $setting->image_model = $request->image_model;
+        $setting->image_model_temperature = $request->image_model_temperature;
         $setting->key = $request->key;
         $setting->product_prompt = $request->product_prompt;
         $setting->is_image_compared = $request->has('imageCompare') ? 1 : 0;

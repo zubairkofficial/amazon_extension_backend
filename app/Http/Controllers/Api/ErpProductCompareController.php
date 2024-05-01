@@ -72,7 +72,7 @@ class ErpProductCompareController extends Controller
             $scrapeproduct->asin = $product['asin'] ?? "";
             $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
             $scrapeproduct->image = $product['image'] ?? '';
-            $scrapeproduct->size = $product['size'] ?? ''; 
+            $scrapeproduct->sizes = $product['sizes'] ?? ''; 
             $scrapeproduct->categories = $product['categories'] ?? '';
             $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
             $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
@@ -142,7 +142,7 @@ class ErpProductCompareController extends Controller
                             'content' => $content,
                         ],
                     ],
-                    'temperature' => 1,
+                    'temperature' => $setting->model_temperature,
                 ]);
 
                 $d = json_decode($chat);
@@ -231,7 +231,7 @@ class ErpProductCompareController extends Controller
                         'content' => $content,
                     ],
                 ],
-                'temperature' => 1,
+                'temperature' => $setting->image_model_temperature,
                 'max_tokens' => 300,
                 "stream" => false,
             ]);
