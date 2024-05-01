@@ -144,7 +144,6 @@
 
         $('#tableData').on('pageChange', function(event, pageNumber) {
             currentPage = pageNumber;
-            console.log(pageNumber);
         });
     });
 
