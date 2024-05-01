@@ -175,14 +175,14 @@ class ScrapeProductController extends Controller
                             'content' => $content,
                         ],
                     ],
-                    'temperature' => $setting->model_temperature,
+                    "temperature" => $setting->model_temperature,
                     // 'max_tokens' => 130,
                 ]);
 
                 $d = json_decode($chat);
+                // StorageLog::info(print_r($d, true));
                 $summary = $d->choices[0]->message->content;
                 // StorageLog::info($image_match);
-
 
                 // $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
                 // if ($image_match['status'] === 'error') {
@@ -364,13 +364,12 @@ class ScrapeProductController extends Controller
                         'content' => $content,
                     ],
                 ],
-                'temperature' => $setting->model,
+                'temperature' => $setting->image_model_temperature,
                 'max_tokens' => 300,
                 "stream" => false,
             ]);
 
             $d = json_decode($chat);
-            // return $d;
             $response = $d->choices[0]->message->content;
             $data = $this->formatJsonContent($response);
             return response()->json(json_decode($data));

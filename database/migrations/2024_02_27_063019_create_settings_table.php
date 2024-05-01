@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('model');
-            $table->string('model_temperature');
+            $table->double('model_temperature',8,1);
             $table->string('image_model');
-            $table->string('image_model_temperature');
+            $table->double('image_model_temperature',8,1);
             $table->string('key');
             $table->text('product_prompt');
             $table->text('image_prompt');
