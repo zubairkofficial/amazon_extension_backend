@@ -113,7 +113,7 @@
         function checkInactivity() {
             var currentTime = new Date();
             if ((currentTime - lastInteractionTime) > 2000) {
-                fetchData();
+                startFetchInterval();
             }
         }
 
@@ -140,10 +140,11 @@
             fetchData($('#search').val());
         }
 
-        setInterval(checkInactivity, 1000); 
+        setInterval(checkInactivity, 3000); 
 
         $('#tableData').on('pageChange', function(event, pageNumber) {
             currentPage = pageNumber;
+            console.log(pageNumber);
         });
     });
 
