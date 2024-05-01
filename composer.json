@@ -13,6 +13,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "livewire/livewire": "^3.4",
         "orhanerday/open-ai": "^5.1",
         "symfony/browser-kit": "^7.0",
         "symfony/dom-crawler": "^7.0",
