@@ -10,14 +10,11 @@ use App\Models\Log;
 use App\Models\Setting;
 use Orhanerday\OpenAi\OpenAi;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log as StorageLog;
-use Illuminate\Support\Facades\Schema;
-use App\Models\Option;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Api\BaseController;
 
 
-class ScrapeProductController extends Controller
+class ScrapeProductController extends BaseController
 {
     public function save(Request $request)
     {
@@ -33,8 +30,7 @@ class ScrapeProductController extends Controller
         DB::beginTransaction();
 
         try {
-            // $systemProductResponse = $this->dispatchSystemProduct($userId, $code);
-            $systemProductResponse = $this->systemProduct($userId, $code);
+            $systemProductResponse = $this->systemProduct($userId, $code, "userID");
             if ($systemProductResponse['status'] === 'error') {
                 DB::rollBack();
                 return response()->json(["message" => $systemProductResponse['message']], $systemProductResponse['code']);
@@ -50,7 +46,6 @@ class ScrapeProductController extends Controller
                 $Ids[] = $scrapeProductResponse['id'];
             }
 
-            // $gptresponse = $this->dispatchGptResp($Ids, $userId);
             $gptresponse = $this->gptresponse($request, $Ids, $userId);
             if ($gptresponse['status'] === 'error') {
                 DB::rollBack();
@@ -64,19 +59,6 @@ class ScrapeProductController extends Controller
             return response()->json(["message" => "An unexpected error occurred", "error" => $e->getMessage()], 500);
         }
     }
-
-    // protected function dispatchSystemProduct($userId, $code)
-    // {
-    //     try {
-    //         dispatch(function () use ($userId, $code) {
-    //             $this->systemProduct($userId, $code);
-    //         });
-    //         return ['status' => 'success'];
-    //     } catch (\Exception $e) {
-    //         StorageLog::error("An error occurred:" . $e->getMessage());
-    //         return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
-    //     }
-    // }
 
     protected function saveScrapeProduct($product, $code, $userId)
     {
@@ -103,64 +85,21 @@ class ScrapeProductController extends Controller
             $createdId = $scrapeproduct->id;
             return ['status' => 'success', 'id' => $createdId];
         } catch (\Exception $e) {
-            // StorageLog::error("An error occurred while saving scrape product: " . $e->getMessage());
-            // return ['status' => 'error', 'message' => 'Failed to save scrape product'];
             return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
         }
     }
 
-    // protected function dispatchGptResp($Ids, $userId)
-    // {
-    //     try {
-
-    //         dispatch(function () use ($Ids, $userId) {
-    //             $this->gptresponse($Ids, $userId);
-    //         });
-    //         return ['status' => 'success'];
-    //     } catch (\Exception $e) {
-    //         StorageLog::error("An error occurred: line:114 disptachgptresp function" . $e->getMessage());
-    //         return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
-    //     }
-    // }
-
-    private function substituteValues(string $prompt, ScrapeProduct $scrapeProduct, SystemProduct $systemProduct): string
-    {
-        $scrapeArguments = Schema::getColumnListing((new ScrapeProduct)->getTable());
-        $systemArguments = Schema::getColumnListing((new SystemProduct)->getTable());
-
-        foreach ($scrapeArguments as $scrapeArgument) {
-            $value = $scrapeProduct->$scrapeArgument;
-            // Check if the value is an array and convert it to a JSON string if it is
-            if (is_array($value)) {
-                $value = json_encode($value, JSON_PRETTY_PRINT);
-            }
-            $prompt = str_replace("{ scrape.$scrapeArgument }", $value, $prompt);
-        }
-
-        foreach ($systemArguments as $systemArgument) {
-            $value = $systemProduct->$systemArgument;
-            // Same check for system product arguments
-            if (is_array($value)) {
-                $value = json_encode($value, JSON_PRETTY_PRINT);
-            }
-            $prompt = str_replace("{ system.$systemArgument }", $value, $prompt);
-        }
-
-        return $prompt;
-    }
 
     public function gptresponse(Request $request, $data, $userId)
     {
         try {
             foreach ($data as $id) {
-                // $setting = Setting::first();
                 $setting = Setting::firstOrFail();
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
 
                 $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
-                // StorageLog::info($content);
                 $open_ai = new OpenAi($setting->key);
 
                 $chat = $open_ai->chat([
@@ -176,35 +115,17 @@ class ScrapeProductController extends Controller
                         ],
                     ],
                     "temperature" => $setting->model_temperature,
-                    // 'max_tokens' => 130,
                 ]);
 
                 $d = json_decode($chat);
-                // StorageLog::info(print_r($d, true));
                 $summary = $d->choices[0]->message->content;
-                // StorageLog::info($image_match);
-
-                // $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
-                // if ($image_match['status'] === 'error') {
-                //     return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
-                // }
-
-
-                // $image_match_data = $image_match['data'];
-                // StorageLog::info($image_match_data->match);
-                // StorageLog::info($image_match_data->reason);
-                // $log->image_match = $image_match_data->match;
-                // $log->image_match_reason = $image_match_data->reason;
-
 
                 $log = new Log();
                 $log->user_id = $userId;
                 $log->asin = $scrapeProduct->asin;
                 $log->prompt = $content;
-                // $log->image_match = $image_match['data'];
-                // $log->image_match = "Image not compared";
                 $log->summary = $summary;
-                $log->image_match = "Image not compared"; // Default value
+                $log->image_match = "Image not compared";
 
                 if ($setting->is_image_compared) {
                     $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
@@ -222,108 +143,8 @@ class ScrapeProductController extends Controller
             }
             return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
         } catch (\Exception $e) {
-            // StorageLog::error("An error occurred:  " . $e->getMessage());
-            // return ['status' => 'error', 'message' => 'Failed to create Chatgpt response'];
             return ['status' => 'error', 'message' => 'Chatgpt error:'.$e->getMessage()];
         }
-    }
-
-    public function systemProduct($userId, $code)
-    {
-        try {
-
-            $productPath = Option::where('key', 'product-url')->first()->value;
-            // StorageLog::info('User id: ' . print_r($userId, true));
-            $response = Http::get($productPath, [
-                'userID' => $userId,
-                'json' => true,
-            ]);
-            if ($response->successful()) {
-                $productData = $response->json();
-                // StorageLog::info('Array content: ' . print_r($productData, true));
-                $systemProduct = new SystemProduct();
-                $systemProduct->title = $productData['title'];
-                $systemProduct->description = $productData['description'];
-                $systemProduct->mpn = $productData['mpn'];
-                $systemProduct->UPC = $productData['UPC'];
-                $systemProduct->price = $productData['price'];
-                $systemProduct->price_map = $productData['price_map'];
-                $systemProduct->shipping = $productData['shipping'];
-                $systemProduct->brand = $productData['brand'];
-                $systemProduct->main_category = $productData['main_category'];
-                $systemProduct->sub_category = $productData['sub_category'];
-                $systemProduct->condition = $productData['condition'];
-                $systemProduct->length = $productData['length'];
-                $systemProduct->width = $productData['width'];
-                $systemProduct->height = $productData['height'];
-                $systemProduct->weight = $productData['weight'];
-                $systemProduct->image = $productData['image'];
-                $systemProduct->code = $code;
-                $systemProduct->save();
-            }
-            return ['status' => 'success'];
-        } catch (\Exception $e) {
-            // StorageLog::error("An error occurred:" . $e->getMessage());
-            // return ['status' => 'error', 'message' => 'Failed to process system product', 'code' => 500];
-            return ['status' => 'error', 'message' => 'System Api error:'.$e->getMessage(), 'code' => 500];
-        }
-    }
-
-
-    public function gptVisionResponse($scrapeProduct, $systemProduct)
-    {
-        try {
-            $setting = Setting::first();
-            $content = $this->substituteValues($setting->image_prompt, $scrapeProduct, $systemProduct);
-            // StorageLog::info($content);
-            $open_ai = new OpenAi($setting->key);
-
-            $chat = $open_ai->chat([
-                // "model" => 'gpt-4-vision-preview',
-                "model" => $setting->image_model,
-                "messages" => [
-                    [
-                        'role' => 'system',
-                        // 'content' => "You are a helpful assistant designed to output JSON",
-                        'content' => "You are a helpful assistant.",
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $content,
-                    ],
-                ],
-                'temperature' => $setting->image_model_temperature,
-                'max_tokens' => 300,
-                "stream" => false,
-            ]);
-
-
-            $d = json_decode($chat);
-            // return $d;
-            $response = $d->choices[0]->message->content;
-            $data = $this->formatJsonContent($response);
-            // StorageLog::info(print_r($data));
-
-            // return ['status' => 'success', 'data' => json_decode($data)];
-            return ['status' => 'success', 'data' => $response];
-        } catch (\Exception $e) {
-            // StorageLog::info($e->getMessage());
-            // return ['status' => 'error', 'message' => 'Failed to create Image compression response'];
-            return ['status' => 'error', 'message' => 'Chatgpt Imgae compage error:'.$e->getMessage()];
-        }
-    }
-
-    private function formatJsonContent(string $content): string
-    {
-        if (preg_match('/```json\n(.*?)\n```/s', $content, $matches)) {
-            $jsonContent = $matches[1];
-
-            $jsonContent = trim(preg_replace('/\s+/', ' ', $jsonContent));
-
-            return $jsonContent;
-        }
-
-        return $content;
     }
 
     public function testgptapi()
@@ -350,14 +171,12 @@ class ScrapeProductController extends Controller
                     ],
                 ],
             ]);
-            // StorageLog::info($content);
             $chat = $open_ai->chat([
                 "model" => 'gpt-4-vision-preview',
                 "messages" => [
                     [
                         'role' => 'system',
                         'content' => "You are a helpful assistant designed to output JSON",
-                        // 'content' => "You are a helpful assistant.",
                     ],
                     [
                         'role' => 'user',
@@ -374,7 +193,6 @@ class ScrapeProductController extends Controller
             $data = $this->formatJsonContent($response);
             return response()->json(json_decode($data));
         } catch (\Exception $e) {
-            // StorageLog::info($e->getMessage());
             return $e->getMessage();
         }
     }
