@@ -69,21 +69,20 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
-    {
+    public function update(Request $request, User $admin)
+    {   
         $data = $request->validate([
             'name' => 'required',
-            'email' => 'email|required',
-            'password' => '',
+            'email' => 'email|required|unique:users,email,'.$admin->id,
+            'password' => 'nullable',
         ]);
-        $data['type'] = 'admin';
-
+        
         if ($data['password'])
             $data['password'] = Hash::make($data['password']);
         else
             unset($data['password']);
 
-        $user->update($data);
+        $admin->update($data);
         return response()->redirectTo('/admin/admins')->with('success', 'Admin updated successfully.');
     }
 
