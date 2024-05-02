@@ -73,7 +73,6 @@ class AdminController extends Controller
     {
         $data = $request->validate([
             'name' => 'required',
-            'username' => 'required',
             'email' => 'email|required',
             'password' => '',
         ]);
