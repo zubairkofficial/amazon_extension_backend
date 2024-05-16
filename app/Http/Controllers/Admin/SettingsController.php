@@ -54,8 +54,6 @@ class SettingsController extends Controller
         if ($request->filled('product_prompt')) {
             $setting->product_prompt = $request->product_prompt;
         }
-        // // Special handling for boolean fields
-        // $setting->is_image_compared = $request->has('imageCompare') ? 1 : 0;
         if ($request->filled('imageCompare')) {
             $setting->is_image_compared = $request->imageCompare;
         }
@@ -68,7 +66,6 @@ class SettingsController extends Controller
         
         $setting->save();
         
-        // Conditionally update the options if data is present in the request
         if ($request->filled('product_url')) {
             $option = Option::where('key', 'product-url')->first();
             if ($option) {
