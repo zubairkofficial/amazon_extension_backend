@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\LocalModelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SelectorController;
@@ -46,6 +47,7 @@ Route::middleware(['auth', 'admin.check'])->prefix('/admin')->group(function () 
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::resource('/users', UserController::class);
     Route::resource('/admins', AdminController::class);
+    Route::resource('/localmodels', LocalModelController::class);
     Route::get('/settings', [SettingsController::class, 'index']);
     Route::post('/settings', [SettingsController::class, 'update']);
     Route::get('selectors/index', [SelectorController::class, 'index'])->name('selectors.index');

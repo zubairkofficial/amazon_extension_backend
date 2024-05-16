@@ -15,6 +15,8 @@ class Setting extends Model
         'prompt',
         'log_delete_days',
         'is_image_compared',
-        'image_model'
+        'image_model',
+        'model_type',
+        'local_model_id'
     ];
 }

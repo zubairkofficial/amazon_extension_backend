@@ -12,6 +12,8 @@ return new class extends Migration {
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
+            $table->string('model_type');
+            $table->string('local_model_id')->nullable();
             $table->string('model');
             $table->double('model_temperature',8,1);
             $table->string('image_model');
