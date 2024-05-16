@@ -46,7 +46,7 @@ class LocalModelController extends Controller
             'character' => 'nullable',
         ]);
         LocalModel::create($data);
-        return response()->redirectTo('/admin/localmodels')->with('success', 'LocalModel created successfully.');
+        return response()->redirectTo('/admin/localmodels')->with('success', 'Local Model created successfully.');
     }
 
     /**
@@ -89,7 +89,7 @@ class LocalModelController extends Controller
         ]);
 
         $localmodel->update($data);
-        return response()->redirectTo('/admin/localmodels')->with('success', 'LocalModel updated successfully.');
+        return response()->redirectTo('/admin/localmodels')->with('success', 'Local Model updated successfully.');
     }
 
     /**
@@ -98,6 +98,6 @@ class LocalModelController extends Controller
     public function destroy(LocalModel $localmodel)
     {
         $localmodel->delete();
-        return response()->redirectTo('/admin/localmodels')->with('success', 'LocalModel deleted successfully.');
+        return response()->redirectTo('/admin/localmodels')->with('success', 'Local Model deleted successfully.');
     }
 }
