@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Option;
+use App\Models\Log;
 use App\Models\LocalModel;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
