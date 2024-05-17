@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Option;
+use App\Models\LocalModel;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use App\Models\ScrapeProduct;
@@ -101,6 +102,9 @@ class BaseController extends Controller
 
 
             $d = json_decode($chat);
+            if($d->error){
+                return response()->json(['status' => 'error', 'message' => 'Chatgpt Imgae compage error:'.$d->error->message]);
+            }
             $response = $d->choices[0]->message->content;
             $data = $this->formatJsonContent($response);
             return ['status' => 'success', 'data' => $response];
@@ -121,4 +125,155 @@ class BaseController extends Controller
 
         return $content;
     }
+
+    public function gptresponse($userId, $productIds, $additionalData = [])
+    {
+        try {
+            $setting = Setting::firstOrFail();
+            $logs = [];
+
+            foreach ($productIds as $id) {
+                $scrapeProduct = ScrapeProduct::find($id);
+                $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
+
+                $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
+                $open_ai = new OpenAi($setting->key);
+
+                $chat = $open_ai->chat([
+                    "model" => $setting->model,
+                    "messages" => [
+                        ['role' => 'system', 'content' => "You are a helpful assistant"],
+                        ['role' => 'user', 'content' => $content],
+                    ],
+                    'temperature' => $setting->model_temperature,
+                ]);
+
+                $d = json_decode($chat);
+                if (isset($d->error)) {
+                    return ['status' => 'error', 'message' => 'Chatgpt error: ' . $d->error->message];
+                }
+
+                $summary = $d->choices[0]->message->content;
+
+                if ($additionalData['reqFrom'] == "ScrapeProduct") {
+                    $log = new Log();
+                    $log->user_id = $userId;
+                    $log->asin = $scrapeProduct->asin;
+                    $log->prompt = $content;
+                    $log->summary = $summary;
+                    $log->image_match = "Image not compared";
+                } elseif ($additionalData['reqFrom'] == "ScrapeCompare") {
+                    $log = [
+                        "asin" => $scrapeProduct->asin,
+                        "is_retried"=> $additionalData['is_retried'],
+                        "summary" => $summary,
+                        "image_match" => "Image not compared"
+                    ];
+                } elseif ($additionalData['reqFrom'] == "ErpProductCompare") {
+                    $log = [
+                        "summary" => $summary,
+                        "image_match" => "Image not compared"
+                    ];
+                }
+                if (isset($additionalData['is_image_compared']) && $additionalData['is_image_compared']) {
+                    $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
+                    if ($image_match['status'] === 'error') {
+                        return ['status' => $image_match['status'], "message" => $image_match['message']];
+                    }
+                    $log["image_match"] = $image_match['data'];
+                }
+                if ($additionalData['reqFrom'] == "ScrapeProduct") {
+                    $log->save();
+                }
+                ScrapeProduct::find($id)->delete();
+                SystemProduct::where('code', $scrapeProduct->code)->first()->delete();
+            }
+
+            return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
+        } catch (\Exception $e) {
+            return ['status' => 'error', 'message' => 'Chatgpt error: ' . $e->getMessage()];
+        }
+    }
+
+    protected function handleLocalModel($userId, $productIds, $additionalData = [])
+    {
+        try {
+            foreach ($productIds as $id) {
+                // Retrieve the API configuration by ID
+                $setting = Setting::firstOrFail();
+                $localModel = LocalModel::findOrFail($setting->local_model_id);
+                $scrapeProduct = ScrapeProduct::find($id);
+                $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
+
+
+                $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
+                // Prepare the data payload dynamically based on the type
+                $data = [];
+                if ($localModel->type == 'completions') {
+                    $type = "completions";
+                    $data = [
+                        'prompt' => $content,
+                        'max_tokens' => $localModel->max_tokens ?? 200,
+                        'temperature' => $localModel->temp ?? 1,
+                        'top_p' => $localModel->top_p ?? 0.9,
+                        'seed' => $localModel->seed ?? 10,
+                    ];
+                } elseif ($localModel->type == 'chat-completions') {
+                    $type = "chat/completions";
+                    $data = [
+                        'messages' => [
+                            ['role' => 'user', 'content' => $content]
+                        ],
+                        'mode' => $localModel->mode ?? 'instruct',
+                        'instruction_template' => $localModel->instruction_template ?? 'Alpaca',
+                    ];
+                } elseif ($localModel->type == 'chat-completions-with-characters') {
+                    $type = "chat/completions";
+                    $data = [
+                        'messages' => [
+                            ['role' => 'user', 'content' => $content]
+                        ],
+                        'mode' => $localModel->mode ?? 'chat',
+                        'character' => $localModel->character ?? 'Example',
+                    ];
+                }
+
+                // Make the HTTP request using Laravel's HTTP client
+                $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->post($localModel->baseUrl . '/v1/' . $type, $data);
+                $summary = $response->json();
+
+                if ($additionalData['reqFrom'] == "ScrapeProduct") {
+                    $log = new Log();
+                    $log->user_id = $userId;
+                    $log->asin = $scrapeProduct->asin;
+                    $log->prompt = $content;
+                    $log->summary = $summary;
+                    $log->image_match = "Image not compared";
+                    $log->save();
+                } elseif ($additionalData['reqFrom'] == "ScrapeCompare") {
+                    $log = [
+                        "asin" => $scrapeProduct->asin,
+                        "is_retried"=> $additionalData['is_retried'],
+                        "summary" => $summary,
+                        "image_match" => "Image not compared"
+                    ];
+                } elseif ($additionalData['reqFrom'] == "ErpProductCompare") {
+                    $log = [
+                        "summary" => $summary,
+                        "image_match" => "Image not compared"
+                    ];
+                }
+
+                ScrapeProduct::find($id)->delete();
+                SystemProduct::where('code', $scrapeProduct->code)->first()->delete();
+            }   
+                // Return the response from the API
+                return response()->json(['status' => 'success', 'message' => 'Local Model Response Created Successfully', 'data' => $log]);
+        } catch (\Exception $e) {
+            return ['status' => 'error', 'message' => 'Chatgpt error:'.$e->getMessage()];
+        }
+    }
+
 }

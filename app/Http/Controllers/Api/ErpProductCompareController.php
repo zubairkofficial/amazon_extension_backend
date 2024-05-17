@@ -38,29 +38,39 @@ class ErpProductCompareController extends BaseController
                 return response()->json(["message" => $systemProductResponse['message']], $systemProductResponse['code']);
             }
 
-            $scrapeProductResponse = $this->saveErpProduct($product, $code, $productId);
+            $scrapeProductResponse = $this->saveErpProduct($product, $code);
             if ($scrapeProductResponse['status'] === 'error') {
                 DB::rollBack();
                 return response()->json(["message" => $scrapeProductResponse['message']]);
             }
             $Id = $scrapeProductResponse['id'];
 
-            $gptresponse = $this->gptresponse($request, $Id, $productId);
-            
-            if ($gptresponse['status'] === 'error') {
-                DB::rollBack();
-                return response()->json(["message" => $gptresponse['message']]);
-            }
+            $additionalData = ['is_image_compared' => $request->is_image_compared, "reqFrom"=> "ErpProductCompare"];
 
+            if($setting->model_type=="openAI_model"){
+                $data = $this->gptresponse($productId, [$Id], $additionalData);
+                if ($data['status'] === 'error') {
+                    DB::rollBack();
+                    return response()->json(["message" => $data['message']], 500);
+                }
+            }elseif($setting->model_type=="local_model"){
+                $data = $this->handleLocalModel($productId, [$Id], $additionalData);
+                if ($data['status'] === 'error') {
+                    DB::rollBack();
+                    return response()->json(["message" => $data['message']], 500);
+                }
+            }else{
+                return response()->json(["message" => "something went wrong"], 500);
+            }
             DB::commit();
-            return response()->json(["message" => "Products processed successfully", 'data' => $gptresponse['data']], 200);
+            return response()->json(["message" => "Products processed successfully", 'data' => $data['data']], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["message" => "An unexpected error occurred", "error" => $e->getMessage()], 500);
         }
     }
 
-    protected function saveErpProduct($product, $code, $productId)
+    protected function saveErpProduct($product, $code)
     {
         try {
             $scrapeproduct = new ScrapeProduct();
@@ -88,56 +98,4 @@ class ErpProductCompareController extends BaseController
             return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
         }
     }
-
-    public function gptresponse(Request $request, $id, $productId)
-    {
-        try {
-                $setting = Setting::firstOrFail();
-                $scrapeProduct = ScrapeProduct::find($id);
-                $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
-
-
-                $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
-                $open_ai = new OpenAi($setting->key);
-
-                $chat = $open_ai->chat([
-                    "model" => $setting->model,
-                    "messages" => [
-                        [
-                            'role' => 'system',
-                            'content' => "You are a helpful assistant",
-                        ],
-                        [
-                            'role' => 'user',
-                            'content' => $content,
-                        ],
-                    ],
-                    'temperature' => $setting->model_temperature,
-                ]);
-
-                $d = json_decode($chat);
-                $summary = $d->choices[0]->message->content;
-
-                $log = [
-                            "summary" => $summary,
-                            "image_match" => "Image not compared"
-                        ];
-
-                if ($request->is_image_compared) {
-                    $image_match = $this->gptVisionResponse($scrapeProduct, $systemProduct);
-                    if ($image_match['status'] === 'error') {
-                        return response()->json(['status' => $image_match['status'], "message" => $image_match['message']], 500);
-                    }
-                    $log["image_match"] = $image_match['data'];
-                }
-
-                ScrapeProduct::find($id)->delete();
-                SystemProduct::where('code', $scrapeProduct->code)->first()->delete();
-
-            return ['status' => 'success', 'message' => 'Chatgpt Response Created Successfully', 'data' => $log];
-        } catch (\Exception $e) {
-            return ['status' => 'error', 'message' => 'Chatgpt error:'.$e->getMessage()];
-        }
-    }
-
 }
