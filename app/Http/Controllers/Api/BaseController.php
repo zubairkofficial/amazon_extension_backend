@@ -39,6 +39,34 @@ class BaseController extends Controller
 
         return $prompt;
     }
+    protected function saveScrapeProduct($product, $code)
+    {
+        try {
+            $scrapeproduct = new ScrapeProduct();
+            $scrapeproduct->title = $product['title'] ?? "";
+            $scrapeproduct->price = $product['price'] ?? 0;
+            $scrapeproduct->unit = $product['unit'] ?? "$";
+            $scrapeproduct->asin = $product['asin'] ?? "";
+            $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
+            $scrapeproduct->image = $product['image'] ?? '';
+            $scrapeproduct->categories = $product['categories'] ?? '';
+            $scrapeproduct->sizes = $product['sizes'] ?? '';
+            $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
+            $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
+            $scrapeproduct->dimension = $product['dimension'] ?? [];
+            $scrapeproduct->manufacturer = $product['manufacturer'] ?? [];
+            $scrapeproduct->shippingCost = $product['shippingCost'] ?? "";
+            $scrapeproduct->about_this_item = $product['about_this_item'] ?? "";
+            $scrapeproduct->detailInfo = $product['detailInfo'] ?? [];
+            $scrapeproduct->description = $product['description'] ?? "";
+            $scrapeproduct->code = $code;
+            $scrapeproduct->save();
+            $createdId = $scrapeproduct->id;
+            return ['status' => 'success', 'id' => $createdId];
+        } catch (\Exception $e) {
+            return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
+        }
+    }
 
     protected function systemProduct($userId, $code,$payload)
     {
@@ -243,7 +271,8 @@ class BaseController extends Controller
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
                 ])->post($localModel->baseUrl . '/v1/' . $type, $data);
-                $summary = $response->json();
+                $data = $response->json();
+                $summary = $data['choices'][0]['message']['content'] ;
 
                 if ($additionalData['reqFrom'] == "ScrapeProduct") {
                     $log = new Log();
@@ -271,7 +300,7 @@ class BaseController extends Controller
                 SystemProduct::where('code', $scrapeProduct->code)->first()->delete();
             }   
                 // Return the response from the API
-                return response()->json(['status' => 'success', 'message' => 'Local Model Response Created Successfully', 'data' => $log]);
+                return ['status' => 'success', 'message' => 'Local Model Response Created Successfully', 'data' => $log];
         } catch (\Exception $e) {
             return ['status' => 'error', 'message' => 'Chatgpt error:'.$e->getMessage()];
         }

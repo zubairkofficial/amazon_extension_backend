@@ -69,7 +69,7 @@ class ScapeCompareController extends BaseController
 
             $Ids = [];
             foreach ($products as $product) {
-                $scrapeProductResponse = $this->saveScrapeProduct($product, $code);
+                $scrapeProductResponse = $this->saveScrapeProductCompare($product, $code);
                 if ($scrapeProductResponse['status'] === 'error') {
                     DB::rollBack();
                     return response()->json(["message" => $scrapeProductResponse['message']]);
@@ -95,14 +95,14 @@ class ScapeCompareController extends BaseController
             }
 
             DB::commit();
-            return response()->json(["message" => "Products processed successfully", 'data' => $gptresponse['data']], 200);
+            return response()->json(["message" => "Products processed successfully", 'data' => $data['data']], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["message" => "An unexpected error occurred", "error" => $e->getMessage()], 500);
         }
     }
 
-    protected function saveScrapeProduct($product, $code)
+    protected function saveScrapeProductCompare($product, $code)
     {
         try {
             $scrapeproduct = new ScrapeProduct();

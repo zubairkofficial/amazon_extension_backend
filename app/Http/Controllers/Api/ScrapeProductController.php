@@ -73,35 +73,6 @@ class ScrapeProductController extends BaseController
         }
     }
 
-    protected function saveScrapeProduct($product, $code)
-    {
-        try {
-            $scrapeproduct = new ScrapeProduct();
-            $scrapeproduct->title = $product['title'] ?? "";
-            $scrapeproduct->price = $product['price'] ?? 0;
-            $scrapeproduct->unit = $product['unit'] ?? "$";
-            $scrapeproduct->asin = $product['asin'] ?? "";
-            $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
-            $scrapeproduct->image = $product['image'] ?? '';
-            $scrapeproduct->categories = $product['categories'] ?? '';
-            $scrapeproduct->sizes = $product['sizes'] ?? '';
-            $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
-            $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
-            $scrapeproduct->dimension = $product['dimension'] ?? [];
-            $scrapeproduct->manufacturer = $product['manufacturer'] ?? [];
-            $scrapeproduct->shippingCost = $product['shippingCost'] ?? "";
-            $scrapeproduct->about_this_item = $product['about_this_item'] ?? "";
-            $scrapeproduct->detailInfo = $product['detailInfo'] ?? [];
-            $scrapeproduct->description = $product['description'] ?? "";
-            $scrapeproduct->code = $code;
-            $scrapeproduct->save();
-            $createdId = $scrapeproduct->id;
-            return ['status' => 'success', 'id' => $createdId];
-        } catch (\Exception $e) {
-            return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
-        }
-    }
-
     public function testgptapi()
     {
         try {

@@ -33,7 +33,7 @@ class ErpProductCompareController extends BaseController
                 return response()->json(["message" => $systemProductResponse['message']], $systemProductResponse['code']);
             }
 
-            $scrapeProductResponse = $this->saveErpProduct($product, $code);
+            $scrapeProductResponse = $this->saveScrapeProduct($product, $code);
             if ($scrapeProductResponse['status'] === 'error') {
                 DB::rollBack();
                 return response()->json(["message" => $scrapeProductResponse['message']]);
@@ -62,35 +62,6 @@ class ErpProductCompareController extends BaseController
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["message" => "An unexpected error occurred", "error" => $e->getMessage()], 500);
-        }
-    }
-
-    protected function saveErpProduct($product, $code)
-    {
-        try {
-            $scrapeproduct = new ScrapeProduct();
-            $scrapeproduct->title = $product['title'] ?? "";
-            $scrapeproduct->price = $product['price'] ?? 0;
-            $scrapeproduct->unit = $product['unit'] ?? "$";
-            $scrapeproduct->asin = $product['asin'] ?? "";
-            $scrapeproduct->priceUnit = $product['priceUnit'] ?? "0. $";
-            $scrapeproduct->image = $product['image'] ?? '';
-            $scrapeproduct->sizes = $product['sizes'] ?? ''; 
-            $scrapeproduct->categories = $product['categories'] ?? '';
-            $scrapeproduct->colorVariations = $product['colorVariations'] ?? [];
-            $scrapeproduct->brandDetails = $product['brandDetails'] ?? [];
-            $scrapeproduct->dimension = $product['dimension'] ?? [];
-            $scrapeproduct->manufacturer = isset ($product['manufacturer']) ?? [];
-            $scrapeproduct->shippingCost = $product['shippingCost'] ?? "";
-            $scrapeproduct->about_this_item = $product['about_this_item'] ?? [];
-            $scrapeproduct->detailInfo = $product['detailInfo'] ?? [];
-            $scrapeproduct->description = $product['description'] ?? "";
-            $scrapeproduct->code = $code;
-            $scrapeproduct->save();
-
-            return ['status' => 'success', 'id' => $scrapeproduct->id];
-        } catch (\Exception $e) {
-            return ['status' => 'error', 'message' => 'Scrape product error:'.$e->getMessage()];
         }
     }
 }
