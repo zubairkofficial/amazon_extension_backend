@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ScrapeProduct;
-use App\Models\SystemProduct;
-use App\Models\Log;
 use App\Models\Setting;
 use Orhanerday\OpenAi\OpenAi;
 use Illuminate\Support\Facades\DB;

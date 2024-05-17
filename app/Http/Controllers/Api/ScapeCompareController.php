@@ -5,15 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ScrapeProduct;
-use App\Models\SystemProduct;
-use App\Models\Log;
 use App\Models\Setting;
 use App\Models\Option;
-use Orhanerday\OpenAi\OpenAi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use App\Http\Controllers\Api\BaseController;
 
 class ScapeCompareController extends BaseController
@@ -80,6 +76,7 @@ class ScapeCompareController extends BaseController
                 }
                 $Ids[] = $scrapeProductResponse['id'];
             }
+            $setting = Setting::firstOrFail();
             $additionalData = ['is_image_compared' => $request->is_image_compared, 'is_retried' => $is_retried, "reqFrom"=> "ScrapeCompare"];
             if($setting->model_type=="openAI_model"){
                 $data = $this->gptresponse($productId, $Ids, $additionalData);
