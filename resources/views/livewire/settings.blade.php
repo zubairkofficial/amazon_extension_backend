@@ -59,32 +59,9 @@
                         data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
                     @endforeach
                 </div>
-
+            
             </div>
-             <script>
-                class ArgumentsHandler {
-                        constructor(textAreaSelector, argumentButtonsSelector) {
-                            this.textarea = document.querySelector(textAreaSelector);
-                            this.argumentButtons = document.querySelectorAll(argumentButtonsSelector);
-
-                            for (const argumentButton of this.argumentButtons)
-                                argumentButton.addEventListener('click', this.argumentButtonClicked.bind(this));
-                        }
-
-                        argumentButtonClicked(e) {
-                            const toAdd = `{ ${e.target.dataset.add} }`;
-                            this.substitute(toAdd);
-                        }
-
-                        substitute(text) {
-                            const { selectionStart, selectionEnd } = this.textarea;
-                            this.textarea.value = this.textarea.value.substr(0, selectionStart) + text + this.textarea.value.substr(selectionEnd);
-                            this.textarea.focus();
-                            this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
-                        }
-                    }
-                new ArgumentsHandler('#prompt', '.prompt-argument');
-            </script>
+             
         </div>        
         @endif
 
@@ -205,27 +182,6 @@
 
                 </div>
                 <script>
-                    class ArgumentsHandler {
-                        constructor(textAreaSelector, argumentButtonsSelector) {
-                            this.textarea = document.querySelector(textAreaSelector);
-                            this.argumentButtons = document.querySelectorAll(argumentButtonsSelector);
-
-                            for (const argumentButton of this.argumentButtons)
-                                argumentButton.addEventListener('click', this.argumentButtonClicked.bind(this));
-                        }
-
-                        argumentButtonClicked(e) {
-                            const toAdd = `{ ${e.target.dataset.add} }`;
-                            this.substitute(toAdd);
-                        }
-
-                        substitute(text) {
-                            const { selectionStart, selectionEnd } = this.textarea;
-                            this.textarea.value = this.textarea.value.substr(0, selectionStart) + text + this.textarea.value.substr(selectionEnd);
-                            this.textarea.focus();
-                            this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
-                        }
-                    }
                     new ArgumentsHandler('#product_prompt', '.product-prompt-argument');
                 </script>
             </div>
@@ -310,25 +266,53 @@
         </div>
 
     </form>
-    <script>
-        document.addEventListener('livewire:load', function () {
-            function validateInputPattern(inputElement, errorElement) {
-                inputElement.addEventListener('input', function () {
-                    if (!inputElement.checkValidity()) {
-                        errorElement.textContent = 'Please enter a value between 0 and 1. Decimals are allowed.';
-                    } else {
-                        errorElement.textContent = '';
-                    }
-                });
+   
+</div>
+
+@push('scripts')
+<script>
+    class ArgumentsHandler {
+            constructor(textAreaSelector, argumentButtonsSelector) {
+                this.textarea = document.querySelector(textAreaSelector);
+                this.argumentButtons = document.querySelectorAll(argumentButtonsSelector);
+
+                for (const argumentButton of this.argumentButtons)
+                    argumentButton.addEventListener('click', this.argumentButtonClicked.bind(this));
             }
 
-            var imageInput = document.getElementById('image_model_temperature');
-            var imageError = document.getElementById('image_model_temperature_error');
-            validateInputPattern(imageInput, imageError); 
+            argumentButtonClicked(e) {
+                const toAdd = `{ ${e.target.dataset.add} }`;
+                this.substitute(toAdd);
+            }
 
-            var modelInput = document.getElementById('model_temperature');
-            var modelError = document.getElementById('model_temperature_error');
-            validateInputPattern(modelInput, modelError); 
-        });
-    </script>
-</div>
+            substitute(text) {
+                const { selectionStart, selectionEnd } = this.textarea;
+                this.textarea.value = this.textarea.value.substr(0, selectionStart) + text + this.textarea.value.substr(selectionEnd);
+                this.textarea.focus();
+                this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
+            }
+        }
+    new ArgumentsHandler('#prompt', '.prompt-argument');
+</script>
+<script>
+    document.addEventListener('livewire:load', function () {
+        function validateInputPattern(inputElement, errorElement) {
+            inputElement.addEventListener('input', function () {
+                if (!inputElement.checkValidity()) {
+                    errorElement.textContent = 'Please enter a value between 0 and 1. Decimals are allowed.';
+                } else {
+                    errorElement.textContent = '';
+                }
+            });
+        }
+
+        var imageInput = document.getElementById('image_model_temperature');
+        var imageError = document.getElementById('image_model_temperature_error');
+        validateInputPattern(imageInput, imageError); 
+
+        var modelInput = document.getElementById('model_temperature');
+        var modelError = document.getElementById('model_temperature_error');
+        validateInputPattern(modelInput, modelError); 
+    });
+</script>
+@endpush

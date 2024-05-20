@@ -30,7 +30,7 @@ class Settings extends Component
     {
         $this->model_type = old('model_type', $setting->model_type);
         $this->local_model_id = old('local_model_id', $setting->local_model_id);
-        $this->prompt = $setting->local_model->prompt;
+        $this->prompt = $setting->local_model->prompt ?? "";
         $this->model = old('model', $setting->model);
         $this->model_temperature = old('model_temperature', $setting->model_temperature);
         $this->image_model = old('image_model', $setting->image_model);
