@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\LocalModel;
 
 class HuggingFace extends Component
 {
@@ -21,8 +22,9 @@ class HuggingFace extends Component
     public $scrapeArguments;
     public $systemArguments;
     public $prompt;
+    public $models;
 
-    public function mount($formType, $model = null,$scrapeArguments,$systemArguments)
+    public function mount($formType, $model = null,$scrapeArguments,$systemArguments,$models)
     {
         $this->formType = $formType;
         $this->model = $model ?? (object) [];
@@ -39,10 +41,19 @@ class HuggingFace extends Component
         $this->prompt = old('prompt') ?? $this->model->prompt ?? '';
         $this->scrapeArguments = $scrapeArguments;
         $this->systemArguments = $systemArguments;
+        $this->models = $models;
     }
 
     public function changeType($value) {
         $this->type = $value;
+    }
+    public function changeCopyFrom($value) {
+        //dd($value);
+        if(!$value == null){
+            $this->prompt = LocalModel::find($value)->prompt;
+        }else{
+            $this->prompt = old('prompt') ?? $this->model->prompt ?? '';
+        }
     }
     public function render()
     {

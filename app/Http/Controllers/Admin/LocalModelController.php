@@ -28,6 +28,7 @@ class LocalModelController extends Controller
     {
         return view('admin.localModel.model-form', [
             'formType' => 'add',
+            'models' => LocalModel::all(),
             'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
             'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);
@@ -73,6 +74,7 @@ class LocalModelController extends Controller
         return view('admin.localModel.model-form', [
             'model' => $localmodel,
             'formType' => 'update',
+            'models' => LocalModel::all(),
             'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
             'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);

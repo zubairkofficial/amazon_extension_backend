@@ -13,7 +13,7 @@
             <label class="form-label" for="model_type">Model Type</label>
             <div class="form-control-wrap">
                 <select class="form-control" id="model_type" name="model_type" wire:change="changeType($event.target.value)"  wire:model="model_type">
-                    <option>Select Model Type</option>
+                    <option value="">Select Model Type</option>
                     <option value="local_model">Local Model</option>
                     <option value="openAI_model">Open AI Model</option>
                 </select>
@@ -26,7 +26,7 @@
                 <label class="form-label" for="local_model_id">Local Model</label>
                 <div class="form-control-wrap">
                     <select class="form-control" id="local_model_id" name="local_model_id" wire:change="changeModel($event.target.value)" wire:model="local_model_id">
-                    <option>Select Local Model</option>
+                    <option value="">Select Local Model</option>
                         @foreach ($local_models as $local_model)
                             <option value="{{ $local_model->id }}">{{ $local_model->name }}</option>
                         @endforeach

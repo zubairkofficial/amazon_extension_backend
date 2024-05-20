@@ -29,7 +29,7 @@
         <div class="form-group mb-3">
             <label for="type" class="form-label">Type</label>
             <select class="form-control" id="type" name="type" wire:change="changeType($event.target.value)" wire:model="type">
-                <option>Select Type</option>
+                <option  value="">Select Type</option>
                 <option value="completions">completions</option>
                 <option value="chat-completions">chat completions</option>
                 <option value="chat-completions-with-characters">Chat completions with characters</option>
@@ -104,6 +104,20 @@
             </div>
         @endif
 
+        @if(count($models)>0)
+            <div class="form-group mb-3">
+                <label for="copyFrom" class="form-label">Prompt Copy From</label>
+                <select class="form-control" id="copyFrom" name="copyFrom" wire:change="changeCopyFrom($event.target.value)">
+                    <option value="">Select Model</option>
+                    @foreach($models as $model)
+                    <option value="{{$model->id}}">{{$model->name}}</option>
+                    @endforeach
+                </select>
+                @error('type')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+        @endif
         <div class="form-group mb-4">
             <label class="form-label" for="prompt">Product Compare Prompt</label>
             <div class="form-control-wrap">
