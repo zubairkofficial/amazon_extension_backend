@@ -19,5 +19,7 @@ class LocalModel extends Model
         'instruction_template',
         'character',
         'baseUrl',
+        'prompt',
     ];
+    
 }

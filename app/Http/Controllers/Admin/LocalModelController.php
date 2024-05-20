@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LocalModel;
+use App\Models\ScrapeProduct;
+use App\Models\SystemProduct;
+use Illuminate\Support\Facades\Schema;
 
 class LocalModelController extends Controller
 {
@@ -14,7 +17,7 @@ class LocalModelController extends Controller
     public function index()
     {
         return view('admin.localModel.models', [
-            'models' => LocalModel::all()
+            'models' => LocalModel::all(),
         ]);
     }
 
@@ -24,7 +27,9 @@ class LocalModelController extends Controller
     public function create()
     {
         return view('admin.localModel.model-form', [
-            'formType' => 'add'
+            'formType' => 'add',
+            'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
+            'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);
     }
 
@@ -44,6 +49,7 @@ class LocalModelController extends Controller
             'mode' => 'nullable',
             'instruction_template' => 'nullable',
             'character' => 'nullable',
+            'prompt' => 'nullable',
         ]);
         LocalModel::create($data);
         return response()->redirectTo('/admin/localmodels')->with('success', 'Local Model created successfully.');
@@ -55,7 +61,7 @@ class LocalModelController extends Controller
     public function show(LocalModel $localmodel)
     {
         return view('admin.localModel.model', [
-            'model' => $localmodel
+            'model' => $localmodel,
         ]);
     }
 
@@ -66,7 +72,9 @@ class LocalModelController extends Controller
     {   
         return view('admin.localModel.model-form', [
             'model' => $localmodel,
-            'formType' => 'update'
+            'formType' => 'update',
+            'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
+            'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);
     }
 
@@ -86,6 +94,7 @@ class LocalModelController extends Controller
             'mode' => 'nullable',
             'instruction_template' => 'nullable',
             'character' => 'nullable',
+            'prompt' => 'nullable',
         ]);
 
         $localmodel->update($data);

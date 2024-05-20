@@ -104,6 +104,58 @@
             </div>
         @endif
 
+        <div class="form-group mb-4">
+            <label class="form-label" for="prompt">Product Compare Prompt</label>
+            <div class="form-control-wrap">
+                <textarea class="form-control" rows="15" id="prompt" wire:model.defer="prompt"
+                    name="prompt"></textarea>
+                <small class="text-danger"></small>
+            </div>
+            <div class="mb-3">
+                <div>
+                    <strong>Scrape Arguments: </strong>
+                    @foreach ($scrapeArguments as $promptArgument)
+                    <button type="button"
+                        class="btn border border-primary d-inline-block m-1 px-2 py-0 prompt-argument"
+                        data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                    @endforeach
+                </div>
+                <div>
+                    <strong>System Arguments: </strong>
+                    @foreach ($systemArguments as $promptArgument)
+                    <button type="button"
+                        class="btn border border-primary d-inline-block m-1 px-2 py-0 prompt-argument"
+                        data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                    @endforeach
+                </div>
+
+            </div>
+            <script>
+                class ArgumentsHandler {
+                    constructor(textAreaSelector, argumentButtonsSelector) {
+                        this.textarea = document.querySelector(textAreaSelector);
+                        this.argumentButtons = document.querySelectorAll(argumentButtonsSelector);
+
+                        for (const argumentButton of this.argumentButtons)
+                            argumentButton.addEventListener('click', this.argumentButtonClicked.bind(this));
+                    }
+
+                    argumentButtonClicked(e) {
+                        const toAdd = `{ ${e.target.dataset.add} }`;
+                        this.substitute(toAdd);
+                    }
+
+                    substitute(text) {
+                        const { selectionStart, selectionEnd } = this.textarea;
+                        this.textarea.value = this.textarea.value.substr(0, selectionStart) + text + this.textarea.value.substr(selectionEnd);
+                        this.textarea.focus();
+                        this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
+                    }
+                }
+                new ArgumentsHandler('#prompt', '.prompt-argument');
+            </script>
+        </div>
+
         <div class="text-end">
             <button class="btn btn-primary">{{ $formType === 'add' ? 'Add' : 'Update' }}</button>
         </div>

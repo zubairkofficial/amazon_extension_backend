@@ -19,4 +19,9 @@ class Setting extends Model
         'model_type',
         'local_model_id'
     ];
+
+    public function local_model()
+    {
+        return $this->hasOne(LocalModel::class, 'id', 'local_model_id');
+    }
 }

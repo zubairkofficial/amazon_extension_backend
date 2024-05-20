@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\LocalModel;
 
 class Settings extends Component
 {
@@ -22,11 +23,14 @@ class Settings extends Component
     public $scrapeArguments;
     public $systemArguments;
     public $local_models;
+    public $timezone;
+    public $prompt;
 
     public function mount($setting,$fastapi_url,$product_url,$scrapeArguments,$systemArguments,$local_models)
     {
         $this->model_type = old('model_type', $setting->model_type);
         $this->local_model_id = old('local_model_id', $setting->local_model_id);
+        $this->prompt = $setting->local_model->prompt;
         $this->model = old('model', $setting->model);
         $this->model_temperature = old('model_temperature', $setting->model_temperature);
         $this->image_model = old('image_model', $setting->image_model);
@@ -41,9 +45,15 @@ class Settings extends Component
         $this->scrapeArguments = $scrapeArguments;
         $this->systemArguments = $systemArguments;
         $this->local_models = $local_models;
+        $this->timezone =  old('log_delete_days', $setting->timezone);
     }
+
     public function changeType($value) {
         $this->model_type = $value;
+    }
+
+    public function changeModel($value) {
+        $this->prompt = LocalModel::find($value)->prompt;
     }
 
     public function render()

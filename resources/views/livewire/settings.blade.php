@@ -25,7 +25,7 @@
             <div class="form-group mb-4">
                 <label class="form-label" for="local_model_id">Local Model</label>
                 <div class="form-control-wrap">
-                    <select class="form-control" id="local_model_id" name="local_model_id" wire:model="local_model_id">
+                    <select class="form-control" id="local_model_id" name="local_model_id" wire:change="changeModel($event.target.value)" wire:model="local_model_id">
                     <option>Select Local Model</option>
                         @foreach ($local_models as $local_model)
                             <option value="{{ $local_model->id }}">{{ $local_model->name }}</option>
@@ -34,7 +34,60 @@
                     <small class="text-danger"></small>
                 </div>
             </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label" for="prompt">Product Compare Prompt</label>
+            <div class="form-control-wrap">
+                <textarea class="form-control" rows="15" id="prompt" wire:model.defer="prompt"
+                    name="prompt"></textarea>
+                <small class="text-danger"></small>
+            </div>
+            <div class="mb-3">
+                <div>
+                    <strong>Scrape Arguments: </strong>
+                    @foreach ($scrapeArguments as $promptArgument)
+                    <button type="button"
+                        class="btn border border-primary d-inline-block m-1 px-2 py-0 prompt-argument"
+                        data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                    @endforeach
+                </div>
+                <div>
+                    <strong>System Arguments: </strong>
+                    @foreach ($systemArguments as $promptArgument)
+                    <button type="button"
+                        class="btn border border-primary d-inline-block m-1 px-2 py-0 prompt-argument"
+                        data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                    @endforeach
+                </div>
+
+            </div>
+             <script>
+                class ArgumentsHandler {
+                        constructor(textAreaSelector, argumentButtonsSelector) {
+                            this.textarea = document.querySelector(textAreaSelector);
+                            this.argumentButtons = document.querySelectorAll(argumentButtonsSelector);
+
+                            for (const argumentButton of this.argumentButtons)
+                                argumentButton.addEventListener('click', this.argumentButtonClicked.bind(this));
+                        }
+
+                        argumentButtonClicked(e) {
+                            const toAdd = `{ ${e.target.dataset.add} }`;
+                            this.substitute(toAdd);
+                        }
+
+                        substitute(text) {
+                            const { selectionStart, selectionEnd } = this.textarea;
+                            this.textarea.value = this.textarea.value.substr(0, selectionStart) + text + this.textarea.value.substr(selectionEnd);
+                            this.textarea.focus();
+                            this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
+                        }
+                    }
+                new ArgumentsHandler('#prompt', '.prompt-argument');
+            </script>
+        </div>        
         @endif
+
         @if($model_type=="openAI_model")
             <div class="form-group mb-4">
                 <label class="form-label" for="model">Model Name</label>
@@ -125,60 +178,57 @@
                     <small class="text-danger"></small>
                 </div>
             </div>
-        @endif
-        <div class="form-group mb-4">
-            <label class="form-label" for="product_prompt">Product Compare Prompt</label>
-            <div class="form-control-wrap">
-                <textarea class="form-control" rows="15" id="product_prompt" wire:model.defer="product_prompt"
-                    name="product_prompt"></textarea>
-                <small class="text-danger"></small>
-            </div>
-            <div class="mb-3">
-                <div>
-                    <strong>Scrape Arguments: </strong>
-                    @foreach ($scrapeArguments as $promptArgument)
-                    <button type="button"
-                        class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument"
-                        data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
-                    @endforeach
+            <div class="form-group mb-4">
+                <label class="form-label" for="product_prompt">Product Compare Prompt</label>
+                <div class="form-control-wrap">
+                    <textarea class="form-control" rows="15" id="product_prompt" wire:model.defer="product_prompt"
+                        name="product_prompt"></textarea>
+                    <small class="text-danger"></small>
                 </div>
-                <div>
-                    <strong>System Arguments: </strong>
-                    @foreach ($systemArguments as $promptArgument)
-                    <button type="button"
-                        class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument"
-                        data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
-                    @endforeach
+                <div class="mb-3">
+                    <div>
+                        <strong>Scrape Arguments: </strong>
+                        @foreach ($scrapeArguments as $promptArgument)
+                        <button type="button"
+                            class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument"
+                            data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                        @endforeach
+                    </div>
+                    <div>
+                        <strong>System Arguments: </strong>
+                        @foreach ($systemArguments as $promptArgument)
+                        <button type="button"
+                            class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument"
+                            data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                        @endforeach
+                    </div>
+
                 </div>
+                <script>
+                    class ArgumentsHandler {
+                        constructor(textAreaSelector, argumentButtonsSelector) {
+                            this.textarea = document.querySelector(textAreaSelector);
+                            this.argumentButtons = document.querySelectorAll(argumentButtonsSelector);
 
+                            for (const argumentButton of this.argumentButtons)
+                                argumentButton.addEventListener('click', this.argumentButtonClicked.bind(this));
+                        }
+
+                        argumentButtonClicked(e) {
+                            const toAdd = `{ ${e.target.dataset.add} }`;
+                            this.substitute(toAdd);
+                        }
+
+                        substitute(text) {
+                            const { selectionStart, selectionEnd } = this.textarea;
+                            this.textarea.value = this.textarea.value.substr(0, selectionStart) + text + this.textarea.value.substr(selectionEnd);
+                            this.textarea.focus();
+                            this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
+                        }
+                    }
+                    new ArgumentsHandler('#product_prompt', '.product-prompt-argument');
+                </script>
             </div>
-            <script>
-                class ArgumentsHandler {
-                    constructor(textAreaSelector, argumentButtonsSelector) {
-                        this.textarea = document.querySelector(textAreaSelector);
-                        this.argumentButtons = document.querySelectorAll(argumentButtonsSelector);
-
-                        for (const argumentButton of this.argumentButtons)
-                            argumentButton.addEventListener('click', this.argumentButtonClicked.bind(this));
-                    }
-
-                    argumentButtonClicked(e) {
-                        const toAdd = `{ ${e.target.dataset.add} }`;
-                        this.substitute(toAdd);
-                    }
-
-                    substitute(text) {
-                        const { selectionStart, selectionEnd } = this.textarea;
-                        this.textarea.value = this.textarea.value.substr(0, selectionStart) + text + this.textarea.value.substr(selectionEnd);
-                        this.textarea.focus();
-                        this.textarea.selectionStart = this.textarea.selectionEnd = selectionStart + text.length;
-                    }
-                }
-                new ArgumentsHandler('#product_prompt', '.product-prompt-argument');
-            </script>
-        </div>
-        
-        @if($model_type=="openAI_model")
             <div class="form-group mb-4">
                 <label class="form-label" for="image_prompt">Image Compare Prompt</label>
                 <div class="form-control-wrap">
@@ -243,7 +293,16 @@
                 <small class="text-danger"></small>
             </div>
         </div>
-
+        <div class="form-group mb-4">
+            <label class="form-label" for="local_model_id">Time Zone</label>
+            <div class="form-control-wrap">                
+            <select name="timezone" id="timezone" class="form-control" wire:model="timezone">
+                @foreach(timezone_identifiers_list() as $timezone)
+                    <option value="{{ $timezone }}">{{ $timezone }}</option>
+                @endforeach
+            </select>
+            </div>
+        </div>
         <div class="mt-3">
             <button type="submit" class="btn btn-primary">
                 Save
@@ -252,7 +311,7 @@
 
     </form>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('livewire:load', function () {
             function validateInputPattern(inputElement, errorElement) {
                 inputElement.addEventListener('input', function () {
                     if (!inputElement.checkValidity()) {

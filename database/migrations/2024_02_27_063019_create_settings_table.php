@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->text('image_prompt');
             $table->boolean('is_image_compared')->default(0);
             $table->integer('log_delete_days');
+            $table->string('timezone')->default('UTC');
             $table->timestamps();
         });
     }

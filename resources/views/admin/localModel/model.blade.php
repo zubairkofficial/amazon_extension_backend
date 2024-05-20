@@ -27,6 +27,12 @@
             <td class="fw-bold">Type</td>
             <td>{{ $model->type }}</td>
         </tr>
+        @if($model->prompt)
+            <tr>
+                <td class="fw-bold">Prompt</td>
+                <td>{{ $model->prompt }}</td>
+            </tr>
+        @endif
         @if($model->max_tokens)
             <tr>
                 <td class="fw-bold">Max Tokens</td>

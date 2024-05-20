@@ -3,7 +3,7 @@
 @section('content')
     @livewireStyles
     
-    @livewire('hugging-face', ['formType' => $formType, 'model' => $model ?? null])
+    @livewire('hugging-face', ['formType' => $formType, 'model' => $model ?? null, "scrapeArguments"=>$scrapeArguments,"systemArguments"=>$systemArguments,])
     
     @livewireScripts
 

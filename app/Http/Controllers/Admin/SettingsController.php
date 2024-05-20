@@ -63,6 +63,9 @@ class SettingsController extends Controller
         if ($request->filled('log_delete_days')) {
             $setting->log_delete_days = $request->log_delete_days;
         }
+        if ($request->filled('timezone')) {
+            $setting->timezone = $request->timezone;
+        }
         
         $setting->save();
         
@@ -78,6 +81,13 @@ class SettingsController extends Controller
             if ($option) {
                 $option->value = $request->fastapi_url;
                 $option->save();
+            }
+        }
+        if ($request->filled('prompt')) {
+            $local_model = LocalModel::where('id', $request->local_model_id)->first();
+            if ($local_model) {
+                $local_model->prompt = $request->prompt;
+                $local_model->save();
             }
         }
 

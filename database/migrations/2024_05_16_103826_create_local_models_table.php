@@ -22,7 +22,8 @@ return new class extends Migration
             $table->integer('seed')->nullable();
             $table->string('mode')->nullable();
             $table->string('instruction_template')->nullable();
-            $table->text('character')->nullable();
+            $table->text('character')->nullable();            
+            $table->text('prompt')->nullable();
             $table->timestamps();
         });
     }

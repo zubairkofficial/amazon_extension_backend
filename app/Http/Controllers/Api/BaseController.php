@@ -234,8 +234,11 @@ class BaseController extends Controller
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
-
-                $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
+                if($localModel->prompt){
+                    $content = $this->substituteValues($localModel->prompt, $scrapeProduct, $systemProduct);
+                }else{
+                    $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
+                }
                 // Prepare the data payload dynamically based on the type
                 $data = [];
                 if ($localModel->type == 'completions') {

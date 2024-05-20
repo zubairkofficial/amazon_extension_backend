@@ -18,8 +18,11 @@ class HuggingFace extends Component
     public $instruction_template;
     public $character;
     public $baseUrl;
+    public $scrapeArguments;
+    public $systemArguments;
+    public $prompt;
 
-    public function mount($formType, $model = null)
+    public function mount($formType, $model = null,$scrapeArguments,$systemArguments)
     {
         $this->formType = $formType;
         $this->model = $model ?? (object) [];
@@ -33,6 +36,9 @@ class HuggingFace extends Component
         $this->mode = old('mode') ?? $this->model->mode ?? '';
         $this->instruction_template = old('instruction_template') ?? $this->model->instruction_template ?? '';
         $this->character = old('character') ?? $this->model->character ?? '';
+        $this->prompt = old('prompt') ?? $this->model->prompt ?? '';
+        $this->scrapeArguments = $scrapeArguments;
+        $this->systemArguments = $systemArguments;
     }
 
     public function changeType($value) {
