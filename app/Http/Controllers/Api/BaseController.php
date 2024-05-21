@@ -241,34 +241,43 @@ class BaseController extends Controller
                 }
                 // Prepare the data payload dynamically based on the type
                 $data = [];
+                $type = $localModel->type == 'completions' ? 'completions' : 'chat/completions';
+
                 if ($localModel->type == 'completions') {
-                    $type = "completions";
-                    $data = [
-                        'prompt' => $content,
-                        'max_tokens' => $localModel->max_tokens ?? 200,
-                        'temperature' => $localModel->temp ?? 1,
-                        'top_p' => $localModel->top_p ?? 0.9,
-                        'seed' => $localModel->seed ?? 10,
+                    $data['prompt'] = $content;
+                    
+                    if ($localModel->max_tokens) {
+                        $data['max_tokens'] = $localModel->max_tokens;
+                    }
+                    if ($localModel->temp) {
+                        $data['temperature'] = $localModel->temp;
+                    }
+                    if ($localModel->top_p) {
+                        $data['top_p'] = $localModel->top_p;
+                    }
+                    if ($localModel->seed) {
+                        $data['seed'] = $localModel->seed;
+                    }
+                } else {
+                    $data['messages'] = [
+                        ['role' => 'user', 'content' => $content]
                     ];
-                } elseif ($localModel->type == 'chat-completions') {
-                    $type = "chat/completions";
-                    $data = [
-                        'messages' => [
-                            ['role' => 'user', 'content' => $content]
-                        ],
-                        'mode' => $localModel->mode ?? 'instruct',
-                        'instruction_template' => $localModel->instruction_template ?? 'Alpaca',
-                    ];
-                } elseif ($localModel->type == 'chat-completions-with-characters') {
-                    $type = "chat/completions";
-                    $data = [
-                        'messages' => [
-                            ['role' => 'user', 'content' => $content]
-                        ],
-                        'mode' => $localModel->mode ?? 'chat',
-                        'character' => $localModel->character ?? 'Example',
-                    ];
+                    
+                    if ($localModel->mode) {
+                        $data['mode'] = $localModel->mode;
+                    }
+                    
+                    if ($localModel->type == 'chat-completions') {
+                        if ($localModel->instruction_template) {
+                            $data['instruction_template'] = $localModel->instruction_template;
+                        }
+                    } elseif ($localModel->type == 'chat-completions-with-characters') {
+                        if ($localModel->character) {
+                            $data['character'] = $localModel->character;
+                        }
+                    }
                 }
+
 
                 // Make the HTTP request using Laravel's HTTP client
                 $response = Http::withHeaders([
