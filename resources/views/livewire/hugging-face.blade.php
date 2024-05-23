@@ -1,12 +1,13 @@
-<div class="row">
+<div>
     <h1 class="mb-2">{{ $formType === 'add' ? 'Create' : 'Update' }} Local Model</h1>
     
     <div class="text-end">
         <a href="/admin/localmodels" class="btn btn-primary">Show All</a>
     </div>
     
+    <form method="POST" class="row" style="--bs-gutter-x: 1.5rem!important;" action="{{ $formType === 'update' ? "/admin/localmodels/{$model->id}" : '/admin/localmodels' }}" id="localModelForm">
+
     <div class="col-md-7">
-        <form method="POST" action="{{ $formType === 'update' ? "/admin/localmodels/{$model->id}" : '/admin/localmodels' }}" id="localModelForm">
             @csrf
             @if($formType === 'update')
                 @method('PUT')
@@ -114,9 +115,6 @@
                             <option value="{{ $model->id }}">{{ $model->name }}</option>
                         @endforeach
                     </select>
-                    @error('type')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
                 </div>
             @endif
 
@@ -124,7 +122,9 @@
                 <label class="form-label" for="prompt">Product Compare Prompt</label>
                 <div class="form-control-wrap">
                     <textarea class="form-control" rows="15" id="prompt" wire:model.defer="prompt" name="prompt"></textarea>
-                    <small class="text-danger"></small>
+                    @error('prompt')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <div>
@@ -167,28 +167,33 @@
             </div>
 
             <div class="text-end mt-3">
-                <button class="btn btn-primary">{{ $formType === 'add' ? 'Add' : 'Update' }}</button>
+                <button type="submit" class="btn btn-primary">{{ $formType === 'add' ? 'Add' : 'Update' }}</button>
             </div>
-        </form>
-    </div>
-
-    <div class="col-md-5 mt-4">
-        <label for="jsonPreview" class="form-label">JSON Preview</label>
-        <!-- <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
-            <pre>{{ $this->jsonPreview }}</pre>
-        </div> -->
-        <textarea class="form-control" id="jsonPreview" rows="15" wire:model.defer="jsonPreview"></textarea>
-        <div class="mt-3">
-            <button class="btn btn-secondary mb-2" wire:click="toggleCurlVisibility">
-                {{ $showCurl ? 'Hide' : 'Show' }} cURL Request
-            </button>
-            @if ($showCurl)
-                <!-- <label for="curlRequest" class="form-label">cURL Request</label> -->
-                <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
-                <pre>{{ $this->curlCommand }}</pre>
-            </div>
-                <!-- <textarea class="form-control" id="curlRequest" rows="6" readonly>{{ $this->curlCommand }}</textarea> -->
-            @endif
         </div>
-    </div>
+    
+        <div class="col-md-5 mt-4">
+            <label for="json" class="form-label">JSON Preview</label>
+            {{-- <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
+                <pre>{{ $this->json }}</pre>
+            </div> --}}
+            <pre>
+                <textarea class="form-control" id="json" name="json" rows="15" wire:model.live="json"></textarea>
+            </pre>
+                @error('json')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            <div class="mt-3">
+                <button type="button" class="btn btn-secondary mb-2" wire:click="toggleCurlVisibility">
+                    {{ $showCurl ? 'Hide' : 'Show' }} cURL Request
+                </button>
+                @if ($showCurl)
+                    {{-- <label for="curlRequest" class="form-label">cURL Request</label> 
+                    <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
+                        <pre>{{ $this->curlCommand }}</pre> 
+                    </div> --}}
+                <pre><textarea class="form-control" id="curlRequest" rows="6" readonly>{{ $this->curlCommand }}</textarea></pre>
+                @endif
+            </div>
+        </div>
+    </form>
 </div>

@@ -67,12 +67,13 @@ class BaseController extends Controller
     {
         $formatted = [];
         foreach ($array as $key => $value) {
+            $key = str_replace('_', ' ', $key); // Replace underscores with spaces
             if (is_array($value)) {
                 $value = json_encode($value); // Handle nested arrays if necessary
             }
             $formatted[] = "$key: $value";
         }
-        return implode(", ", $formatted);
+        return implode(",\n ", $formatted);
     }
 
     protected function saveScrapeProduct($product, $code)
@@ -278,8 +279,11 @@ class BaseController extends Controller
                 // Prepare the data payload dynamically based on the type
                 $data = [];
                 $type = $localModel->type == 'completions' ? 'completions' : 'chat/completions';
-
-                if ($localModel->type == 'completions') {
+                if($localModel->json){
+                    $data = $localModel->json;
+                    
+                }
+                elseif ($localModel->type == 'completions') {
                     $data['prompt'] = $content;
                     
                     if ($localModel->max_tokens) {

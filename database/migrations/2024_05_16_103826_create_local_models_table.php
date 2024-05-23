@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('instruction_template')->nullable();
             $table->text('character')->nullable();            
             $table->text('prompt')->nullable();
+            $table->json('json')->nullable();
             $table->timestamps();
         });
     }

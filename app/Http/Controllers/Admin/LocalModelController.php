@@ -41,6 +41,7 @@ class LocalModelController extends Controller
     {
         $data = $request->validate([
             'name' => 'required',
+            'json' => 'required',
             'type' => 'required',
             'baseUrl' => 'required',
             'max_tokens' => 'nullable',
@@ -87,6 +88,7 @@ class LocalModelController extends Controller
     {
         $data = $request->validate([
             'name' => 'required',
+            'json' => 'required',
             'type' => 'required',
             'baseUrl' => 'required',
             'max_tokens' => 'nullable',

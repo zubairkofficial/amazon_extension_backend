@@ -23,7 +23,7 @@ class HuggingFace extends Component
     public $systemArguments;
     public $prompt;
     public $models;
-    public $jsonPreview;
+    public $json;
     public $showCurl = false;
 
     public function mount($formType, $model = null, $scrapeArguments, $systemArguments, $models)
@@ -44,7 +44,10 @@ class HuggingFace extends Component
         $this->scrapeArguments = $scrapeArguments;
         $this->systemArguments = $systemArguments;
         $this->models = $models;
-        $this->updateJsonPreview();
+        $this->json = old('json') ?? $this->model->json ?? "";
+        if($formType!=="update"){
+            $this->updateJsonPreview();
+        }
     }
 
     public function changeType($value) {
@@ -74,12 +77,12 @@ class HuggingFace extends Component
             }
         }
 
-        return json_encode($data, JSON_PRETTY_PRINT);
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     public function updateJsonPreview()
     {
-        $this->jsonPreview = $this->getJsonPreviewProperty();
+        $this->json = $this->getJsonPreviewProperty();
     }
 
     public function changeCopyFrom($value) {
@@ -98,54 +101,33 @@ class HuggingFace extends Component
 
     public function getCurlCommandProperty()
     {
+        $escapedJson = $this->json;
+
         $command = "";
 
         if ($this->type === 'completions') {
             $command = <<<CURL
                         curl {$this->baseUrl}/v1/completions \\
                         -H "Content-Type: application/json" \\
-                        -d '{
-                            "prompt": "{$this->prompt}",
-                            "max_tokens": {$this->max_tokens},
-                            "temperature": {$this->temp},
-                            "top_p": {$this->top_p},
-                            "seed": {$this->seed}
-                        }'
+                        -d '{$escapedJson}'
                         CURL;
         } elseif ($this->type === 'chat-completions') {
             $command = <<<CURL
                     curl {$this->baseUrl}/v1/chat/completions \\
                     -H "Content-Type: application/json" \\
-                    -d '{
-                        "messages": [
-                            {
-                                "role": "user",
-                                "content": "{$this->prompt}"
-                            }
-                        ],
-                        "mode": "{$this->mode}",
-                        "instruction_template": "{$this->instruction_template}"
-                    }'
+                    -d '{$escapedJson}'
                     CURL;
         } elseif ($this->type === 'chat-completions-with-characters') {
             $command = <<<CURL
                     curl {$this->baseUrl}/v1/chat/completions \\
                     -H "Content-Type: application/json" \\
-                    -d '{
-                        "messages": [
-                            {
-                                "role": "user",
-                                "content": "{$this->prompt}"
-                            }
-                        ],
-                        "mode": "{$this->mode}",
-                        "character": "{$this->character}"
-                    }'
+                    -d '{$escapedJson}'
                 CURL;
         }
 
         return $command;
     }
+
 
     public function render()
     {
