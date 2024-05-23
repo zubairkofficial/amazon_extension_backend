@@ -16,6 +16,29 @@ use Orhanerday\OpenAi\OpenAi;
 
 class BaseController extends Controller
 {
+    // protected function substituteValues(string $prompt, ScrapeProduct $scrapeProduct, SystemProduct $systemProduct): string
+    // {
+    //     $scrapeArguments = Schema::getColumnListing((new ScrapeProduct)->getTable());
+    //     $systemArguments = Schema::getColumnListing((new SystemProduct)->getTable());
+
+    //     foreach ($scrapeArguments as $scrapeArgument) {
+    //         $value = $scrapeProduct->$scrapeArgument;
+    //         if (is_array($value)) {
+    //             $value = json_encode($value, JSON_PRETTY_PRINT);
+    //         }
+    //         $prompt = str_replace("{ scrape.$scrapeArgument }", $value, $prompt);
+    //     }
+
+    //     foreach ($systemArguments as $systemArgument) {
+    //         $value = $systemProduct->$systemArgument;
+    //         if (is_array($value)) {
+    //             $value = json_encode($value, JSON_PRETTY_PRINT);
+    //         }
+    //         $prompt = str_replace("{ system.$systemArgument }", $value, $prompt);
+    //     }
+
+    //     return $prompt;
+    // }
     protected function substituteValues(string $prompt, ScrapeProduct $scrapeProduct, SystemProduct $systemProduct): string
     {
         $scrapeArguments = Schema::getColumnListing((new ScrapeProduct)->getTable());
@@ -24,7 +47,7 @@ class BaseController extends Controller
         foreach ($scrapeArguments as $scrapeArgument) {
             $value = $scrapeProduct->$scrapeArgument;
             if (is_array($value)) {
-                $value = json_encode($value, JSON_PRETTY_PRINT);
+                $value = $this->formatArrayAsKeyValuePairs($value);
             }
             $prompt = str_replace("{ scrape.$scrapeArgument }", $value, $prompt);
         }
@@ -32,13 +55,26 @@ class BaseController extends Controller
         foreach ($systemArguments as $systemArgument) {
             $value = $systemProduct->$systemArgument;
             if (is_array($value)) {
-                $value = json_encode($value, JSON_PRETTY_PRINT);
+                $value = $this->formatArrayAsKeyValuePairs($value);
             }
             $prompt = str_replace("{ system.$systemArgument }", $value, $prompt);
         }
 
         return $prompt;
     }
+
+    protected function formatArrayAsKeyValuePairs(array $array): string
+    {
+        $formatted = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $value = json_encode($value); // Handle nested arrays if necessary
+            }
+            $formatted[] = "$key: $value";
+        }
+        return implode(", ", $formatted);
+    }
+
     protected function saveScrapeProduct($product, $code)
     {
         try {
