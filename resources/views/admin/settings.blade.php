@@ -42,7 +42,7 @@
         <div class="form-group mb-4">
             <label class="form-label" for="prompt">Product Compare Prompt</label>
             <div class="form-control-wrap">
-                <textarea class="form-control" rows="15" id="prompt" name="prompt">{{ $setting->local_model->prompt }}</textarea>
+                <textarea class="form-control" rows="15" id="prompt" name="prompt">{{ $setting->local_model?->prompt }}</textarea>
                 <small class="text-danger"></small>
             </div>
             <div class="mb-3">
