@@ -15,16 +15,16 @@ use App\Models\SystemProduct;
 class SettingsController extends Controller
 {
     public function index()
-    {
-        return view("admin.settings", [
-            'setting' => Setting::first(),
+    {   
+        return view("admin.settings",[
+            'setting' => Setting::with("local_model")->first(),
             'user' => Auth::user(),
             'local_models' => LocalModel::all(),
             'productUrl' => Option::where('key', 'product-url')->first()->value,
             'fastapiUrl' => Option::where('key', 'fastapi-url')->first()->value,
             'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
             'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
-        ]);
+        ] );
     }
 
     public function update(Request $request)

@@ -23,8 +23,10 @@ class HuggingFace extends Component
     public $systemArguments;
     public $prompt;
     public $models;
+    public $jsonPreview;
+    public $showCurl = false;
 
-    public function mount($formType, $model = null,$scrapeArguments,$systemArguments,$models)
+    public function mount($formType, $model = null, $scrapeArguments, $systemArguments, $models)
     {
         $this->formType = $formType;
         $this->model = $model ?? (object) [];
@@ -42,15 +44,19 @@ class HuggingFace extends Component
         $this->scrapeArguments = $scrapeArguments;
         $this->systemArguments = $systemArguments;
         $this->models = $models;
+        $this->updateJsonPreview();
     }
 
     public function changeType($value) {
         $this->type = $value;
+        $this->updateJsonPreview();
     }
 
     public function getJsonPreviewProperty()
-    {       
-        if ($this->type != null) {
+    {
+        $data = [];
+
+        if ($this->type) {
             if ($this->type === 'completions') {
                 $data['prompt'] = $this->prompt;
                 $data['max_tokens'] = $this->max_tokens;
@@ -58,27 +64,87 @@ class HuggingFace extends Component
                 $data['top_p'] = $this->top_p;
                 $data['seed'] = $this->seed;
             } elseif ($this->type === 'chat-completions') {
-                $data['content'] = $this->prompt;
+                $data['messages'] = [['role' => 'user', 'content' => $this->prompt]];
                 $data['mode'] = $this->mode;
                 $data['instruction_template'] = $this->instruction_template;
             } elseif ($this->type === 'chat-completions-with-characters') {
-                $data['content'] = $this->prompt;
+                $data['messages'] = [['role' => 'user', 'content' => $this->prompt]];
                 $data['mode'] = $this->mode;
                 $data['character'] = $this->character;
             }
-        }else{
-            $data="";
         }
+
         return json_encode($data, JSON_PRETTY_PRINT);
     }
-    
+
+    public function updateJsonPreview()
+    {
+        $this->jsonPreview = $this->getJsonPreviewProperty();
+    }
+
     public function changeCopyFrom($value) {
-        if(!$value == null){
+        if ($value) {
             $this->prompt = LocalModel::find($value)->prompt;
-            
-        }else{
+        } else {
             $this->prompt = old('prompt') ?? $this->model->prompt ?? "";
         }
+        $this->updateJsonPreview();
+    }
+
+    public function toggleCurlVisibility()
+    {
+        $this->showCurl = !$this->showCurl;
+    }
+
+    public function getCurlCommandProperty()
+    {
+        $command = "";
+
+        if ($this->type === 'completions') {
+            $command = <<<CURL
+                        curl {$this->baseUrl}/v1/completions \\
+                        -H "Content-Type: application/json" \\
+                        -d '{
+                            "prompt": "{$this->prompt}",
+                            "max_tokens": {$this->max_tokens},
+                            "temperature": {$this->temp},
+                            "top_p": {$this->top_p},
+                            "seed": {$this->seed}
+                        }'
+                        CURL;
+        } elseif ($this->type === 'chat-completions') {
+            $command = <<<CURL
+                    curl {$this->baseUrl}/v1/chat/completions \\
+                    -H "Content-Type: application/json" \\
+                    -d '{
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": "{$this->prompt}"
+                            }
+                        ],
+                        "mode": "{$this->mode}",
+                        "instruction_template": "{$this->instruction_template}"
+                    }'
+                    CURL;
+        } elseif ($this->type === 'chat-completions-with-characters') {
+            $command = <<<CURL
+                    curl {$this->baseUrl}/v1/chat/completions \\
+                    -H "Content-Type: application/json" \\
+                    -d '{
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": "{$this->prompt}"
+                            }
+                        ],
+                        "mode": "{$this->mode}",
+                        "character": "{$this->character}"
+                    }'
+                CURL;
+        }
+
+        return $command;
     }
 
     public function render()

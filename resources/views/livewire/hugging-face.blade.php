@@ -1,11 +1,11 @@
-<div class="row" >
+<div class="row">
     <h1 class="mb-2">{{ $formType === 'add' ? 'Create' : 'Update' }} Local Model</h1>
     
     <div class="text-end">
         <a href="/admin/localmodels" class="btn btn-primary">Show All</a>
     </div>
     
-    <div class="col-md-7" >
+    <div class="col-md-7">
         <form method="POST" action="{{ $formType === 'update' ? "/admin/localmodels/{$model->id}" : '/admin/localmodels' }}" id="localModelForm">
             @csrf
             @if($formType === 'update')
@@ -43,28 +43,28 @@
             @if($type === 'completions')
                 <div class="form-group mb-3">
                     <label for="max_tokens" class="form-label">Max Tokens</label>
-                    <input type="number" class="form-control" id="max_tokens" name="max_tokens" wire:model.defer="max_tokens" wire:input="getJsonPreviewProperty()" autocomplete="max_tokens">
+                    <input type="number" class="form-control" id="max_tokens" name="max_tokens" wire:model.defer="max_tokens" wire:input="updateJsonPreview" autocomplete="max_tokens">
                     @error('max_tokens')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="temp" class="form-label">Temperature</label>
-                    <input type="number" class="form-control" id="temp" name="temp" wire:model.defer="temp" autocomplete="temp" wire:input="getJsonPreviewProperty()">
+                    <input type="number" class="form-control" id="temp" name="temp" wire:model.defer="temp" autocomplete="temp" wire:input="updateJsonPreview">
                     @error('temp')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="top_p" class="form-label">Top_p</label>
-                    <input type="number" class="form-control" id="top_p" name="top_p" wire:model.defer="top_p" autocomplete="top_p"  wire:input="getJsonPreviewProperty()">
+                    <input type="number" class="form-control" id="top_p" name="top_p" wire:model.defer="top_p" autocomplete="top_p" wire:input="updateJsonPreview">
                     @error('top_p')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="seed" class="form-label">Seed</label>
-                    <input type="number" class="form-control" id="seed" name="seed" wire:model.defer="seed" autocomplete="seed" wire:input="getJsonPreviewProperty()">
+                    <input type="number" class="form-control" id="seed" name="seed" wire:model.defer="seed" autocomplete="seed" wire:input="updateJsonPreview">
                     @error('seed')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -74,14 +74,14 @@
             @if($type === 'chat-completions')
                 <div class="form-group mb-3">
                     <label for="mode" class="form-label">Mode</label>
-                    <input type="text" class="form-control" id="mode" name="mode" wire:model.defer="mode" autocomplete="mode" wire:input="getJsonPreviewProperty()">
+                    <input type="text" class="form-control" id="mode" name="mode" wire:model.defer="mode" autocomplete="mode" wire:input="updateJsonPreview">
                     @error('mode')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="instruction_template" class="form-label">Instruction Template</label>
-                    <input type="text" class="form-control" id="instruction_template" name="instruction_template" wire:model.defer="instruction_template" wire:input="getJsonPreviewProperty()" autocomplete="instruction_template">
+                    <input type="text" class="form-control" id="instruction_template" name="instruction_template" wire:model.defer="instruction_template" wire:input="updateJsonPreview" autocomplete="instruction_template">
                     @error('instruction_template')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -91,14 +91,14 @@
             @if($type === 'chat-completions-with-characters')
                 <div class="form-group mb-3">
                     <label for="mode" class="form-label">Mode</label>
-                    <input type="text" class="form-control" id="mode" name="mode" wire:model.defer="mode" autocomplete="mode" wire:input="getJsonPreviewProperty()">
+                    <input type="text" class="form-control" id="mode" name="mode" wire:model.defer="mode" autocomplete="mode" wire:input="updateJsonPreview">
                     @error('mode')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="character" class="form-label">Character</label>
-                    <input type="text" class="form-control" id="character" name="character" wire:model.defer="character" wire:input="getJsonPreviewProperty()" autocomplete="character">
+                    <input type="text" class="form-control" id="character" name="character" wire:model.defer="character" wire:input="updateJsonPreview" autocomplete="character">
                     @error('character')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -108,7 +108,7 @@
             @if(count($models) > 0)
                 <div class="form-group mb-3">
                     <label for="copyFrom" class="form-label">Prompt Copy From</label>
-                    <select class="form-control" id="copyFrom" name="copyFrom" wire:change="changeCopyFrom($event.target.value)" wire:input="getJsonPreviewProperty()">
+                    <select class="form-control" id="copyFrom" name="copyFrom" wire:change="changeCopyFrom($event.target.value)" wire:input="updateJsonPreview">
                         <option value="">Select Model</option>
                         @foreach($models as $model)
                             <option value="{{ $model->id }}">{{ $model->name }}</option>
@@ -141,7 +141,6 @@
                     </div>
                 </div>
                 <script>
-                    
                     class ArgumentsHandler {
                         constructor(textAreaSelector, argumentButtonsSelector) {
                             this.textarea = document.querySelector(textAreaSelector);
@@ -173,11 +172,23 @@
         </form>
     </div>
 
-    <div class="col-md-5 mt-4" >        
-        <label for="baseUrl" class="form-label">JSON PREVIEW</label>
-        <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
+    <div class="col-md-5 mt-4">
+        <label for="jsonPreview" class="form-label">JSON Preview</label>
+        <!-- <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
             <pre>{{ $this->jsonPreview }}</pre>
+        </div> -->
+        <textarea class="form-control" id="jsonPreview" rows="15" wire:model.defer="jsonPreview"></textarea>
+        <div class="mt-3">
+            <button class="btn btn-secondary mb-2" wire:click="toggleCurlVisibility">
+                {{ $showCurl ? 'Hide' : 'Show' }} cURL Request
+            </button>
+            @if ($showCurl)
+                <!-- <label for="curlRequest" class="form-label">cURL Request</label> -->
+                <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
+                <pre>{{ $this->curlCommand }}</pre>
+            </div>
+                <!-- <textarea class="form-control" id="curlRequest" rows="6" readonly>{{ $this->curlCommand }}</textarea> -->
+            @endif
         </div>
     </div>
 </div>
-
