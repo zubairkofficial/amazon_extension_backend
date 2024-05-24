@@ -29,7 +29,7 @@ class DeleteOldLogs extends Command
     {
         // Assume you have a 'settings' table with a 'key' and 'value' columns
         // For example, a row with key='log_delete_days' and value='3'
-        $daysSetting = DB::table('gpt_keys')->first();
+        $daysSetting = DB::table('settings')->first();
         $days = $daysSetting ? (int) $daysSetting->log_delete_days : 1; // Default to 1 day if not set
 
         // Calculate the date N days ago
