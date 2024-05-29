@@ -98,6 +98,14 @@
                                         </a>
                                     </li>
                                     <li class="nk-menu-item">
+                                        <a href="{{ route('openaimodels.index') }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon">
+                                                <em class="icon ni ni-setting"></em>
+                                            </span>
+                                            <span class="nk-menu-text">OpenAI Models</span>
+                                        </a>
+                                    </li>
+                                    <li class="nk-menu-item">
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
                                             <a href="route('logout')"

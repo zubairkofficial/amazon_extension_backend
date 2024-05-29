@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use App\Models\Option;
 use App\Models\LocalModel;
+use App\Models\OpenAIModel;
 use App\Models\Setting;
 use App\Models\ScrapeProduct;
 use App\Models\SystemProduct;
@@ -20,6 +21,7 @@ class SettingsController extends Controller
             'setting' => Setting::with("local_model")->first(),
             'user' => Auth::user(),
             'local_models' => LocalModel::all(),
+            'OpenAI_models' => OpenAIModel::all(),
             'productUrl' => Option::where('key', 'product-url')->first()->value,
             'fastapiUrl' => Option::where('key', 'fastapi-url')->first()->value,
             'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),

@@ -71,15 +71,9 @@
             <label class="form-label" for="model">Model Name</label>
             <div class="form-control-wrap">
                 <select class="form-control" id="model" name="model">
-                    <option value="gpt-4-1106-preview" @if($setting->model == 'gpt-4-1106-preview') selected @endif>gpt-4-1106-preview</option>
-                    <option value="gpt-4-0125-preview" @if($setting->model == 'gpt-4-0125-preview') selected @endif>gpt-4-0125-preview</option>
-                    <option value="gpt-4-turbo-preview" @if($setting->model == 'gpt-4-turbo-preview') selected @endif>gpt-4-turbo-preview</option>
-                    <option value="gpt-4" @if($setting->model == 'gpt-4') selected @endif>gpt-4</option>
-                    <option value="gpt-4-0613" @if($setting->model == 'gpt-4-0613') selected @endif>gpt-4-0613</option>
-                    <option value="gpt-4-32k" @if($setting->model == 'gpt-4-32k') selected @endif>gpt-4-32k</option>
-                    <option value="gpt-4-32k-0613" @if($setting->model == 'gpt-4-32k-0613') selected @endif>gpt-4-32k-0613</option>
-                    <option value="gpt-3.5-turbo-0125" @if($setting->model == 'gpt-3.5-turbo-0125') selected @endif>gpt-3.5-turbo-0125</option>
-                    <option value="gpt-3.5-turbo" @if($setting->model == 'gpt-3.5-turbo') selected @endif>gpt-3.5-turbo</option>
+                    @foreach($OpenAI_models as $model)
+                        <option @if($setting->model == $model->value) selected @endif value="{{ $model->value }}">{{ $model->name }}</option>
+                    @endforeach
                 </select>
                 <small class="text-danger"></small>
             </div>
