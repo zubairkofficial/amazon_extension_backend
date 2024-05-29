@@ -58,7 +58,7 @@ class HuggingFace extends Component
     public function getJsonPreviewProperty()
     {
         $data = [];
-
+    
         if ($this->type) {
             if ($this->type === 'completions') {
                 $data['prompt'] = $this->prompt;
@@ -76,9 +76,36 @@ class HuggingFace extends Component
                 $data['character'] = $this->character;
             }
         }
-
-        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    
+        $jsonData = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    
+        // Use regular expression to remove curly braces after "messages": [
+        $jsonData = preg_replace_callback(
+            '/"messages":\s*\[\s*{(.*?)}\s*\]/s',
+            function ($matches) {
+                // Remove leading { and trailing }
+                $content = trim($matches[1]);
+                $content = preg_replace('/^{/', '', $content);
+                $content = preg_replace('/}$/', '', $content);
+                return '"messages": [' . $content . ']';
+            },
+            $jsonData
+        );
+    
+        // Remove leading and trailing curly braces, and wrap in square brackets
+        if (substr($jsonData, 0, 1) === '{' && substr($jsonData, -1) === '}') {
+            $jsonData = substr($jsonData, 1, -1);
+        }
+    
+        // Ensure the JSON structure is an array
+        $jsonData = "[\n" . $jsonData . "\n]";
+    
+        // Assign and return the JSON preview
+        $this->json = $jsonData;
+        return $jsonData;
     }
+    
+
 
     public function updateJsonPreview()
     {
