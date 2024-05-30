@@ -59,6 +59,7 @@ class HuggingFace extends Component
     {
         $data = [];
 
+
         if ($this->type) {
             if ($this->type === 'completions') {
                 $data['prompt'] = $this->prompt;
