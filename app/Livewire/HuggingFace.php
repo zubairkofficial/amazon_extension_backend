@@ -58,51 +58,42 @@ class HuggingFace extends Component
     public function getJsonPreviewProperty()
     {
         $data = [];
-    
+
         if ($this->type) {
             if ($this->type === 'completions') {
                 $data['prompt'] = $this->prompt;
-                $data['max_tokens'] = $this->max_tokens;
-                $data['temperature'] = $this->temp;
-                $data['top_p'] = $this->top_p;
-                $data['seed'] = $this->seed;
+                if($this->max_tokens){
+                    $data['max_tokens'] = $this->max_tokens;
+                }
+                if($this->temp){
+                    $data['temperature'] = $this->temp;
+                }
+                if($this->top_p){
+                    $data['top_p'] = $this->top_p;
+                }
+                if($this->seed){
+                    $data['seed'] = $this->seed;
+                }
             } elseif ($this->type === 'chat-completions') {
                 $data['messages'] = [['role' => 'user', 'content' => $this->prompt]];
-                $data['mode'] = $this->mode;
-                $data['instruction_template'] = $this->instruction_template;
+                if($this->mode){
+                    $data['mode'] = $this->mode;
+                }
+                if($this->instruction_template){
+                    $data['instruction_template'] = $this->instruction_template;
+                }
             } elseif ($this->type === 'chat-completions-with-characters') {
                 $data['messages'] = [['role' => 'user', 'content' => $this->prompt]];
-                $data['mode'] = $this->mode;
-                $data['character'] = $this->character;
+                if($this->mode){
+                    $data['mode'] = $this->mode;
+                }
+                if($this->character){
+                    $data['character'] = $this->character;
+                }
             }
         }
-    
-        $jsonData = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    
-        // Use regular expression to remove curly braces after "messages": [
-        $jsonData = preg_replace_callback(
-            '/"messages":\s*\[\s*{(.*?)}\s*\]/s',
-            function ($matches) {
-                // Remove leading { and trailing }
-                $content = trim($matches[1]);
-                $content = preg_replace('/^{/', '', $content);
-                $content = preg_replace('/}$/', '', $content);
-                return '"messages": [' . $content . ']';
-            },
-            $jsonData
-        );
-    
-        // Remove leading and trailing curly braces, and wrap in square brackets
-        if (substr($jsonData, 0, 1) === '{' && substr($jsonData, -1) === '}') {
-            $jsonData = substr($jsonData, 1, -1);
-        }
-    
-        // Ensure the JSON structure is an array
-        $jsonData = "[\n" . $jsonData . "\n]";
-    
-        // Assign and return the JSON preview
-        $this->json = $jsonData;
-        return $jsonData;
+
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
     
 
