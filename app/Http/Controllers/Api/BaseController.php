@@ -280,8 +280,7 @@ class BaseController extends Controller
                 $data = [];
                 $type = $localModel->type == 'completions' ? 'completions' : 'chat/completions';
                 if($localModel->json){
-                    $data = $localModel->json;
-                    
+                    $data = json_decode($localModel->json,true);
                 }
                 elseif ($localModel->type == 'completions') {
                     $data['prompt'] = $content;
