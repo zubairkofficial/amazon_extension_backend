@@ -196,6 +196,7 @@ class BaseController extends Controller
             foreach ($productIds as $id) {
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
+                $prompt = $setting->openai_model->openai_prompt;
                 $content = $this->substituteValues($setting->openai_model->json, $scrapeProduct, $systemProduct);
 
                 if (json_decode($content) === null) {
@@ -219,7 +220,7 @@ class BaseController extends Controller
                     $log = new Log();
                     $log->user_id = $userId;
                     $log->asin = $scrapeProduct->asin;
-                    $log->prompt = $content;
+                    $log->prompt = $prompt;
                     $log->summary = $summary;
                     $log->image_match = "Image not compared";
                 } elseif ($additionalData['reqFrom'] == "ScrapeCompare") {
@@ -265,6 +266,7 @@ class BaseController extends Controller
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
                 $type = $setting->local_model->type == 'completions' ? 'completions' : 'chat/completions';
+                $prompt = $setting->local_model->prompt;
                 $content = $this->substituteValues($setting->local_model->json, $scrapeProduct, $systemProduct);
 
                 if (json_decode($content) === null) {
@@ -277,7 +279,7 @@ class BaseController extends Controller
                 // Make the HTTP request using Laravel's HTTP client
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
-                ])->post($localModel->baseUrl . '/v1/' . $type, $json);
+                ])->post($setting->local_model->baseUrl . '/v1/' . $type, $json);
                 $respdata = $response->json();
                 $summary = $respdata['choices'][0]['message']['content'] ;
 
@@ -285,7 +287,7 @@ class BaseController extends Controller
                     $log = new Log();
                     $log->user_id = $userId;
                     $log->asin = $scrapeProduct->asin;
-                    $log->prompt = $content;
+                    $log->prompt = $prompt;
                     $log->summary = $summary;
                     $log->image_match = "Image not compared";
                     $log->save();
