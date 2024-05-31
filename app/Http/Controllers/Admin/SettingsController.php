@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use App\Models\Option;
 use App\Models\LocalModel;
+use App\Models\ImageCompareModel;
 use App\Models\OpenAIModel;
 use App\Models\Setting;
 use App\Models\ScrapeProduct;
@@ -18,10 +19,11 @@ class SettingsController extends Controller
     public function index()
     {   
         return view("admin.settings",[
-            'setting' => Setting::with("local_model","openai_model")->first(),
+            'setting' => Setting::with("local_model","openai_model","imageCompare_model")->first(),
             'user' => Auth::user(),
             'local_models' => LocalModel::all(),
             'OpenAI_models' => OpenAIModel::all(),
+            'imgcomp_models' => ImageCompareModel::all(),
             'productUrl' => Option::where('key', 'product-url')->first()->value,
             'fastapiUrl' => Option::where('key', 'fastapi-url')->first()->value,
             'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
@@ -87,6 +89,13 @@ class SettingsController extends Controller
             if ($OpenAIModel) {
                 $OpenAIModel->openai_prompt = $request->openai_prompt;
                 $OpenAIModel->save();
+            }
+        }
+        if ($request->filled('prompt')) {
+            $local_model = LocalModel::where('id', $request->local_model_id)->first();
+            if ($local_model) {
+                $local_model->prompt = $request->prompt;
+                $local_model->save();
             }
         }
         if ($request->filled('prompt')) {

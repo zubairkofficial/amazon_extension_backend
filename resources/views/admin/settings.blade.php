@@ -81,42 +81,6 @@
         </div>
 
         <div class="form-group mb-4">
-            <label class="form-label" for="image_model">Image Compare Model</label>
-            <div class="form-control-wrap">
-                <select class="form-control" id="image_model" name="image_model">
-                    <option value="gpt-4-vision-preview" @if($setting->image_model == 'gpt-4-vision-preview') selected @endif>gpt-4-vision-preview</option>
-                    <option value="gpt-4-1106-vision-preview" @if($setting->image_model == 'gpt-4-1106-vision-preview') selected @endif>gpt-4-1106-vision-preview</option>
-                    <option value="gpt-4-1106-preview" @if($setting->image_model == 'gpt-4-1106-preview') selected @endif>gpt-4-1106-preview</option>
-                    <option value="gpt-4-0125-preview" @if($setting->image_model == 'gpt-4-0125-preview') selected @endif>gpt-4-0125-preview</option>
-                    <option value="gpt-4-turbo-preview" @if($setting->image_model == 'gpt-4-turbo-preview') selected @endif>gpt-4-turbo-preview</option>
-                    <option value="gpt-4" @if($setting->image_model == 'gpt-4') selected @endif>gpt-4</option>
-                    <option value="gpt-4-0613" @if($setting->image_model == 'gpt-4-0613') selected @endif>gpt-4-0613</option>
-                    <option value="gpt-4-32k" @if($setting->image_model == 'gpt-4-32k') selected @endif>gpt-4-32k</option>
-                    <option value="gpt-4-32k-0613" @if($setting->image_model == 'gpt-4-32k-0613') selected @endif>gpt-4-32k-0613</option>
-                    <option value="gpt-3.5-turbo-0125" @if($setting->image_model == 'gpt-3.5-turbo-0125') selected @endif>gpt-3.5-turbo-0125</option>
-                    <option value="gpt-3.5-turbo" @if($setting->image_model == 'gpt-3.5-turbo') selected @endif>gpt-3.5-turbo</option>
-                </select>
-                <small class="text-danger"></small>
-            </div>
-        </div>
-
-        <div class="form-group mb-4">
-            <label class="form-label" for="image_model_temperature">Image Model Temperature</label>
-            <div class="form-control-wrap">
-                <input class="form-control" id="image_model_temperature" name="image_model_temperature" type="text" pattern="^(0(\.\d+)?|1(\.0+)?)$" value="{{ old('image_model_temperature',$setting->image_model_temperature) }}" required />
-                <small id="image_model_temperature_error" class="text-danger"></small>
-            </div>
-        </div>
-
-        <div class="form-group mb-4">
-            <label class="form-label" for="key">Key</label>
-            <div class="form-control-wrap">
-                <input class="form-control" id="key" name="key" type="text" value="{{ old('key',$setting->key) }}" />
-                <small class="text-danger"></small>
-            </div>
-        </div>
-
-        <div class="form-group mb-4">
             <label class="form-label" for="openai_prompt">Product Compare Prompt</label>
             <div class="form-control-wrap">
                 <textarea class="form-control" rows="15" id="openai_prompt" name="openai_prompt">{{ $setting->openai_model?->openai_prompt }}</textarea>
@@ -143,30 +107,43 @@
         </div>
 
         <div class="form-group mb-4">
-            <label class="form-label" for="image_prompt">Image Compare Prompt</label>
+            <label class="form-label" for="imagecompare_model_id">Image Compare Model</label>
             <div class="form-control-wrap">
-                <textarea class="form-control" id="image_prompt" rows="10" name="image_prompt">{{ $setting->image_prompt }}</textarea>
+                <select class="form-control" id="imagecompare_model_id" name="imagecompare_model_id">
+                    @foreach($imgcomp_models as $model)
+                        <option @if($setting->imagecompare_model_id == $model->id) selected @endif value="{{ $model->id }}" 
+                            data-prompt="{{ $model->imageCompare_prompt }}">{{ $model->name }}</option>
+                    @endforeach
+                </select>
+                <small class="text-danger"></small>
+            </div>
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label" for="imageCompare_prompt">Image Compare Prompt</label>
+            <div class="form-control-wrap">
+                <textarea class="form-control" id="imageCompare_prompt" rows="10" name="imageCompare_prompt">{{ $setting->imageCompare_model?->imageCompare_prompt }}</textarea>
                 <small class="text-danger"></small>
             </div>
             <div class="mb-3">
                 <div>
                     <strong>Scrape Arguments: </strong>
                     @foreach ($scrapeArguments as $promptArgument)
-                    @if($promptArgument==='image')
-                    <button type="button"
-                        class="btn border border-primary d-inline-block m-1 px-2 py-0 image-prompt-argument"
-                        data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
-                    @endif
+                        @if($promptArgument==='image')
+                        <button type="button"
+                            class="btn border border-primary d-inline-block m-1 px-2 py-0 image-prompt-argument"
+                            data-add="scrape.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                        @endif
                     @endforeach
                 </div>
                 <div>
                     <strong>System Arguments: </strong>
                     @foreach ($systemArguments as $promptArgument)
-                    @if($promptArgument=='image')
-                    <button type="button"
-                        class="btn border border-primary d-inline-block m-1 px-2 py-0 image-prompt-argument"
-                        data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
-                    @endif
+                        @if($promptArgument=='image')
+                        <button type="button"
+                            class="btn border border-primary d-inline-block m-1 px-2 py-0 image-prompt-argument"
+                            data-add="system.{{ $promptArgument }}">{{ $promptArgument }}</button>
+                        @endif
                     @endforeach
                 </div>
                 <div>
@@ -178,7 +155,16 @@
             </div>
         </div>
     </div>
-
+    
+    
+    <div class="form-group mb-4">
+        <label class="form-label" for="key">Key</label>
+        <div class="form-control-wrap">
+            <input class="form-control" id="key" name="key" type="text" value="{{ old('key',$setting->key) }}" />
+            <small class="text-danger"></small>
+        </div>
+    </div>
+    
     <div class="form-group mb-4">
         <label class="form-label" for="product_url">Products URL</label>
         <div class="form-control-wrap">
@@ -251,6 +237,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const promptTextarea = document.getElementById('prompt');
     const openaiModelSelect = document.getElementById('open_ai_model_id');
     const openaipromptTextarea = document.getElementById('openai_prompt');
+    const imagecompareModelSelect = document.getElementById('imagecompare_model_id');
+    const imageComparepromptTextarea = document.getElementById('imageCompare_prompt');
 
     function toggleSections() {
         const selectedModelType = modelTypeSelect.value;
@@ -276,6 +264,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const selectedOption = this.options[this.selectedIndex];
         const prompt = selectedOption.getAttribute('data-prompt');
         openaipromptTextarea.value = prompt || '';
+    });
+
+    imagecompareModelSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const prompt = selectedOption.getAttribute('data-prompt');
+        imageComparepromptTextarea.value = prompt || '';
     });
 
     modelTypeSelect.addEventListener('change', toggleSections);

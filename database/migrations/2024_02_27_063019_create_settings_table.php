@@ -15,11 +15,9 @@ return new class extends Migration {
             $table->string('model_type');
             $table->string('local_model_id')->nullable();
             $table->string('open_ai_model_id');
-            $table->string('image_model');
-            $table->double('image_model_temperature',8,1);
-            $table->string('key');
-            $table->text('image_prompt');
+            $table->string('imagecompare_model_id');
             $table->boolean('is_image_compared')->default(0);
+            $table->string('key');
             $table->integer('log_delete_days');
             $table->string('timezone')->default('UTC');
             $table->timestamps();

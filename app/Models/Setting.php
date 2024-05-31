@@ -13,10 +13,10 @@ class Setting extends Model
         'key',
         'log_delete_days',
         'is_image_compared',
-        'image_model',
         'model_type',
         'open_ai_model_id',
-        'local_model_id'
+        'local_model_id',
+        'imagecompare_model_id'
     ];
 
     public function local_model()
@@ -26,5 +26,9 @@ class Setting extends Model
     public function openai_model()
     {
         return $this->hasOne(OpenAIModel::class, 'id', 'open_ai_model_id');
+    }
+    public function imageCompare_model()
+    {
+        return $this->hasOne(ImageCompareModel::class, 'id', 'imagecompare_model_id');
     }
 }

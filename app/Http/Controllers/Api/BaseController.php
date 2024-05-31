@@ -49,7 +49,9 @@ class BaseController extends Controller
             if (is_array($value)) {
                 $value = $this->formatArrayAsKeyValuePairs($value);
             }
-            $prompt = str_replace("{ scrape.$scrapeArgument }", $value, $prompt);
+            // Sanitize and JSON-encode the value
+            $value = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $prompt = str_replace("{ scrape.$scrapeArgument }", trim($value, '"'), $prompt);
         }
 
         foreach ($systemArguments as $systemArgument) {
@@ -57,7 +59,9 @@ class BaseController extends Controller
             if (is_array($value)) {
                 $value = $this->formatArrayAsKeyValuePairs($value);
             }
-            $prompt = str_replace("{ system.$systemArgument }", $value, $prompt);
+            // Sanitize and JSON-encode the value
+            $value = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $prompt = str_replace("{ system.$systemArgument }", trim($value, '"'), $prompt);
         }
 
         return $prompt;
@@ -145,26 +149,17 @@ class BaseController extends Controller
     protected function gptVisionResponse($scrapeProduct, $systemProduct)
     {
         try {
-            $setting = Setting::first();
-            $content = $this->substituteValues($setting->image_prompt, $scrapeProduct, $systemProduct);
+            $setting = Setting::with("imageCompare_model")->first();
             $open_ai = new OpenAi($setting->key);
 
-            $chat = $open_ai->chat([
-                "model" => $setting->image_model,
-                "messages" => [
-                    [
-                        'role' => 'system',
-                        'content' => "You are a helpful assistant.",
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $content,
-                    ],
-                ],
-                'temperature' => $setting->image_model_temperature,
-                'max_tokens' => 300,
-                "stream" => false,
-            ]);
+            $content = $this->substituteValues($setting->imageCompare_model->json, $scrapeProduct, $systemProduct);
+
+            if (json_decode($content) === null) {
+                throw new \Exception('Invalid JSON after substitution: ' . json_last_error_msg());
+            }
+
+            $json = json_decode($content, true);
+            $chat = $open_ai->chat($json);
 
 
             $d = json_decode($chat);
@@ -201,12 +196,16 @@ class BaseController extends Controller
             foreach ($productIds as $id) {
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
+                $content = $this->substituteValues($setting->openai_model->json, $scrapeProduct, $systemProduct);
 
-                $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
+                if (json_decode($content) === null) {
+                    throw new \Exception('Invalid JSON after substitution: ' . json_last_error_msg());
+                }
+    
                 $open_ai = new OpenAi($setting->key);
-                
-                $json = json_decode($setting->openai_model->json,true);
-
+    
+                $json = json_decode($content, true);
+    
                 $chat = $open_ai->chat($json);
 
                 $d = json_decode($chat);
@@ -265,57 +264,20 @@ class BaseController extends Controller
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
-                if($setting->local_model->prompt){
-                    $content = $this->substituteValues($setting->local_model->prompt, $scrapeProduct, $systemProduct);
-                }else{
-                    $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
-                }
-                // Prepare the data payload dynamically based on the type
-                $data = [];
                 $type = $setting->local_model->type == 'completions' ? 'completions' : 'chat/completions';
-                if($setting->local_model->json){
-                    $data = json_decode($setting->local_model->json,true);
-                }
-                elseif ($setting->local_model->type == 'completions') {
-                    $data['prompt'] = $content;
-                    
-                    if ($setting->local_model->max_tokens) {
-                        $data['max_tokens'] = $setting->local_model->max_tokens;
-                    }
-                    if ($setting->local_model->temp) {
-                        $data['temperature'] = $setting->local_model->temp;
-                    }
-                    if ($setting->local_model->top_p) {
-                        $data['top_p'] = $setting->local_model->top_p;
-                    }
-                    if ($setting->local_model->seed) {
-                        $data['seed'] = $setting->local_model->seed;
-                    }
-                } else {
-                    $data['messages'] = [
-                        ['role' => 'user', 'content' => $content]
-                    ];
-                    
-                    if ($setting->local_model->mode) {
-                        $data['mode'] = $setting->local_model->mode;
-                    }
-                    
-                    if ($setting->local_model->type == 'chat-completions') {
-                        if ($setting->local_model->instruction_template) {
-                            $data['instruction_template'] = $setting->local_model->instruction_template;
-                        }
-                    } elseif ($setting->local_model->type == 'chat-completions-with-characters') {
-                        if ($setting->local_model->character) {
-                            $data['character'] = $setting->local_model->character;
-                        }
-                    }
-                }
+                $content = $this->substituteValues($setting->local_model->json, $scrapeProduct, $systemProduct);
 
+                if (json_decode($content) === null) {
+                    throw new \Exception('Invalid JSON after substitution: ' . json_last_error_msg());
+                }
+    
+                $json = json_decode($content, true);
+                
 
                 // Make the HTTP request using Laravel's HTTP client
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
-                ])->post($localModel->baseUrl . '/v1/' . $type, $data);
+                ])->post($localModel->baseUrl . '/v1/' . $type, $json);
                 $respdata = $response->json();
                 $summary = $respdata['choices'][0]['message']['content'] ;
 

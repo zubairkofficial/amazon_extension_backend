@@ -107,6 +107,11 @@
                                                     <span class="nk-menu-text">OpenAI Models</span>
                                                 </a>
                                             </li>
+                                            <li class="nk-menu-item">
+                                                <a href="{{ route('imgCompModels.index') }}" class="nk-menu-link">
+                                                    <span class="nk-menu-text">Image Compare Models</span>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="nk-menu-item">
