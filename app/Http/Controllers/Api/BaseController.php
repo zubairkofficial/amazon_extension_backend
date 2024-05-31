@@ -195,7 +195,7 @@ class BaseController extends Controller
     public function gptresponse($userId, $productIds, $additionalData = [])
     {
         try {
-            $setting = Setting::firstOrFail();
+            $setting = Setting::with("openai_model")->firstOrFail();
             $logs = [];
 
             foreach ($productIds as $id) {
@@ -204,15 +204,10 @@ class BaseController extends Controller
 
                 $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
                 $open_ai = new OpenAi($setting->key);
+                
+                $json = json_decode($setting->openai_model->json,true);
 
-                $chat = $open_ai->chat([
-                    "model" => $setting->model,
-                    "messages" => [
-                        ['role' => 'system', 'content' => "You are a helpful assistant"],
-                        ['role' => 'user', 'content' => $content],
-                    ],
-                    'temperature' => $setting->model_temperature,
-                ]);
+                $chat = $open_ai->chat($json);
 
                 $d = json_decode($chat);
                 if (isset($d->error)) {
@@ -266,53 +261,52 @@ class BaseController extends Controller
         try {
             foreach ($productIds as $id) {
                 // Retrieve the API configuration by ID
-                $setting = Setting::firstOrFail();
-                $localModel = LocalModel::findOrFail($setting->local_model_id);
+                $setting = Setting::with("local_model")->firstOrFail();
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
-                if($localModel->prompt){
-                    $content = $this->substituteValues($localModel->prompt, $scrapeProduct, $systemProduct);
+                if($setting->local_model->prompt){
+                    $content = $this->substituteValues($setting->local_model->prompt, $scrapeProduct, $systemProduct);
                 }else{
                     $content = $this->substituteValues($setting->product_prompt, $scrapeProduct, $systemProduct);
                 }
                 // Prepare the data payload dynamically based on the type
                 $data = [];
-                $type = $localModel->type == 'completions' ? 'completions' : 'chat/completions';
-                if($localModel->json){
-                    $data = json_decode($localModel->json,true);
+                $type = $setting->local_model->type == 'completions' ? 'completions' : 'chat/completions';
+                if($setting->local_model->json){
+                    $data = json_decode($setting->local_model->json,true);
                 }
-                elseif ($localModel->type == 'completions') {
+                elseif ($setting->local_model->type == 'completions') {
                     $data['prompt'] = $content;
                     
-                    if ($localModel->max_tokens) {
-                        $data['max_tokens'] = $localModel->max_tokens;
+                    if ($setting->local_model->max_tokens) {
+                        $data['max_tokens'] = $setting->local_model->max_tokens;
                     }
-                    if ($localModel->temp) {
-                        $data['temperature'] = $localModel->temp;
+                    if ($setting->local_model->temp) {
+                        $data['temperature'] = $setting->local_model->temp;
                     }
-                    if ($localModel->top_p) {
-                        $data['top_p'] = $localModel->top_p;
+                    if ($setting->local_model->top_p) {
+                        $data['top_p'] = $setting->local_model->top_p;
                     }
-                    if ($localModel->seed) {
-                        $data['seed'] = $localModel->seed;
+                    if ($setting->local_model->seed) {
+                        $data['seed'] = $setting->local_model->seed;
                     }
                 } else {
                     $data['messages'] = [
                         ['role' => 'user', 'content' => $content]
                     ];
                     
-                    if ($localModel->mode) {
-                        $data['mode'] = $localModel->mode;
+                    if ($setting->local_model->mode) {
+                        $data['mode'] = $setting->local_model->mode;
                     }
                     
-                    if ($localModel->type == 'chat-completions') {
-                        if ($localModel->instruction_template) {
-                            $data['instruction_template'] = $localModel->instruction_template;
+                    if ($setting->local_model->type == 'chat-completions') {
+                        if ($setting->local_model->instruction_template) {
+                            $data['instruction_template'] = $setting->local_model->instruction_template;
                         }
-                    } elseif ($localModel->type == 'chat-completions-with-characters') {
-                        if ($localModel->character) {
-                            $data['character'] = $localModel->character;
+                    } elseif ($setting->local_model->type == 'chat-completions-with-characters') {
+                        if ($setting->local_model->character) {
+                            $data['character'] = $setting->local_model->character;
                         }
                     }
                 }
@@ -322,8 +316,8 @@ class BaseController extends Controller
                 $response = Http::withHeaders([
                     'Content-Type' => 'application/json',
                 ])->post($localModel->baseUrl . '/v1/' . $type, $data);
-                $data = $response->json();
-                $summary = $data['choices'][0]['message']['content'] ;
+                $respdata = $response->json();
+                $summary = $respdata['choices'][0]['message']['content'] ;
 
                 if ($additionalData['reqFrom'] == "ScrapeProduct") {
                     $log = new Log();

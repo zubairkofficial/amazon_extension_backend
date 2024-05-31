@@ -10,18 +10,21 @@ class Setting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'model',
         'key',
-        'prompt',
         'log_delete_days',
         'is_image_compared',
         'image_model',
         'model_type',
+        'open_ai_model_id',
         'local_model_id'
     ];
 
     public function local_model()
     {
         return $this->hasOne(LocalModel::class, 'id', 'local_model_id');
+    }
+    public function openai_model()
+    {
+        return $this->hasOne(OpenAIModel::class, 'id', 'open_ai_model_id');
     }
 }

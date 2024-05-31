@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\OpenAIModel;
+use App\Models\ScrapeProduct;
+use App\Models\SystemProduct;
+use Illuminate\Support\Facades\Schema;
 
 class OpenAIModelController extends Controller
 {
@@ -26,6 +29,8 @@ class OpenAIModelController extends Controller
         return view('admin.openaiModel.model-form', [
             'formType' => 'add',
             'models' => OpenAIModel::all(),
+            'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
+            'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);
     }
 
@@ -37,6 +42,9 @@ class OpenAIModelController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'value' => 'required',
+            'temp' => 'required',
+            'openai_prompt' => 'required',
+            'json' => 'required'
         ]);
         OpenAIModel::create($data);
         return response()->redirectTo('/admin/openaimodels')->with('success', 'OpenAI Model created successfully.');
@@ -61,6 +69,8 @@ class OpenAIModelController extends Controller
             'model' => $openaimodel,
             'formType' => 'update',
             'models' => OpenAIModel::all(),
+            'scrapeArguments' => Schema::getColumnListing((new ScrapeProduct)->getTable()),
+            'systemArguments' => Schema::getColumnListing((new SystemProduct)->getTable()),
         ]);
     }
 
@@ -72,6 +82,9 @@ class OpenAIModelController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'value' => 'required',
+            'temp' => 'required',
+            'openai_prompt' => 'required',
+            'json' => 'required'
         ]);
 
         $openaimodel->update($data);

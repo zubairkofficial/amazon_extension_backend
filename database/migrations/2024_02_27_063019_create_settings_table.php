@@ -14,12 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->string('model_type');
             $table->string('local_model_id')->nullable();
-            $table->string('model');
-            $table->double('model_temperature',8,1);
+            $table->string('open_ai_model_id');
             $table->string('image_model');
             $table->double('image_model_temperature',8,1);
             $table->string('key');
-            $table->text('product_prompt');
             $table->text('image_prompt');
             $table->boolean('is_image_compared')->default(0);
             $table->integer('log_delete_days');

@@ -18,7 +18,7 @@ class SettingsController extends Controller
     public function index()
     {   
         return view("admin.settings",[
-            'setting' => Setting::with("local_model")->first(),
+            'setting' => Setting::with("local_model","openai_model")->first(),
             'user' => Auth::user(),
             'local_models' => LocalModel::all(),
             'OpenAI_models' => OpenAIModel::all(),
@@ -38,8 +38,8 @@ class SettingsController extends Controller
         if ($request->filled('local_model_id')) {
             $setting->local_model_id = $request->local_model_id;
         }
-        if ($request->filled('model')) {
-            $setting->model = $request->model;
+        if ($request->filled('open_ai_model_id')) {
+            $setting->open_ai_model_id = $request->open_ai_model_id;
         }
         if ($request->filled('model_temperature')) {
             $setting->model_temperature = $request->model_temperature;
@@ -52,9 +52,6 @@ class SettingsController extends Controller
         }
         if ($request->filled('key')) {
             $setting->key = $request->key;
-        }
-        if ($request->filled('product_prompt')) {
-            $setting->product_prompt = $request->product_prompt;
         }
         if ($request->filled('imageCompare')) {
             $setting->is_image_compared = $request->imageCompare;
@@ -83,6 +80,13 @@ class SettingsController extends Controller
             if ($option) {
                 $option->value = $request->fastapi_url;
                 $option->save();
+            }
+        }
+        if ($request->filled('openai_prompt')) {
+            $OpenAIModel = OpenAIModel::where('id', $request->open_ai_model_id)->first();
+            if ($OpenAIModel) {
+                $OpenAIModel->openai_prompt = $request->openai_prompt;
+                $OpenAIModel->save();
             }
         }
         if ($request->filled('prompt')) {

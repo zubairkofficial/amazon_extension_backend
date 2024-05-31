@@ -68,22 +68,15 @@
 
     <div id="openAI_model_section" style="display: none;">
         <div class="form-group mb-4">
-            <label class="form-label" for="model">Model Name</label>
+            <label class="form-label" for="open_ai_model_id">Open AI Model Name</label>
             <div class="form-control-wrap">
-                <select class="form-control" id="model" name="model">
+                <select class="form-control" id="open_ai_model_id" name="open_ai_model_id">
                     @foreach($OpenAI_models as $model)
-                        <option @if($setting->model == $model->value) selected @endif value="{{ $model->value }}">{{ $model->name }}</option>
+                        <option @if($setting->open_ai_model_id == $model->id) selected @endif value="{{ $model->id }}" 
+                            data-prompt="{{ $model->openai_prompt }}">{{ $model->name }}</option>
                     @endforeach
                 </select>
                 <small class="text-danger"></small>
-            </div>
-        </div>
-
-        <div class="form-group mb-4">
-            <label class="form-label" for="model_temperature">Model Temperature</label>
-            <div class="form-control-wrap">
-                <input class="form-control" id="model_temperature" name="model_temperature" type="text" pattern="^(0(\.\d+)?|1(\.0+)?)$" value="{{ old('model_temperature',$setting->model_temperature) }}" required />
-                <small id="model_temperature_error" class="text-danger"></small>
             </div>
         </div>
 
@@ -124,9 +117,9 @@
         </div>
 
         <div class="form-group mb-4">
-            <label class="form-label" for="product_prompt">Product Compare Prompt</label>
+            <label class="form-label" for="openai_prompt">Product Compare Prompt</label>
             <div class="form-control-wrap">
-                <textarea class="form-control" rows="15" id="product_prompt" name="product_prompt">{{ $setting->product_prompt }}</textarea>
+                <textarea class="form-control" rows="15" id="openai_prompt" name="openai_prompt">{{ $setting->openai_model?->openai_prompt }}</textarea>
                 <small class="text-danger"></small>
             </div>
             <div class="mb-3">
@@ -179,7 +172,7 @@
                 <div>
                     <strong>Image Compare: </strong>
                     <input type="checkbox" id="imageCompareCheckbox" name="imageCompare"
-                        class="btn border border-primary d-inline-block m-1 px-2 py-0 product-prompt-argument" {{
+                        class="btn border border-primary d-inline-block m-1 px-2 py-0" {{
                         $setting->is_image_compared ? 'checked' : '' }}>
                 </div>
             </div>
@@ -256,6 +249,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const openAIModelSection = document.getElementById('openAI_model_section');
     const localModelSelect = document.getElementById('local_model_id');
     const promptTextarea = document.getElementById('prompt');
+    const openaiModelSelect = document.getElementById('open_ai_model_id');
+    const openaipromptTextarea = document.getElementById('openai_prompt');
 
     function toggleSections() {
         const selectedModelType = modelTypeSelect.value;
@@ -277,14 +272,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         promptTextarea.value = prompt || '';
     });
 
+    openaiModelSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const prompt = selectedOption.getAttribute('data-prompt');
+        openaipromptTextarea.value = prompt || '';
+    });
+
     modelTypeSelect.addEventListener('change', toggleSections);
 
     toggleSections(); // Initial call to set the correct state based on the pre-selected value.
 
     const imageInput = document.getElementById('image_model_temperature');
     const imageError = document.getElementById('image_model_temperature_error');
-    const modelInput = document.getElementById('model_temperature');
-    const modelError = document.getElementById('model_temperature_error');
 
     function validateInputPattern(inputElement, errorElement) {
         inputElement.addEventListener('input', function () {
@@ -297,10 +296,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     validateInputPattern(imageInput, imageError); 
-    validateInputPattern(modelInput, modelError); 
-
     new ArgumentsHandler('#prompt', '.prompt-argument');
-    new ArgumentsHandler('#product_prompt', '.product-prompt-argument');
+    new ArgumentsHandler('#openai_prompt', '.product-prompt-argument');
     new ArgumentsHandler('#image_prompt', '.image-prompt-argument');
 });
 </script>

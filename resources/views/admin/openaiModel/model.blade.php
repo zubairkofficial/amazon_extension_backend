@@ -19,6 +19,10 @@
             <td class="fw-bold">value</td>
             <td>{{ $model->value }}</td>
         </tr>
+        <tr>
+            <td class="fw-bold">Temperature</td>
+            <td>{{ $model->temp }}</td>
+        </tr>
     </table>
 
 @endsection

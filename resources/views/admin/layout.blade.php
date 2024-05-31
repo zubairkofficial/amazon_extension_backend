@@ -89,21 +89,25 @@
                                             <span class="nk-menu-text">Profile Setting</span>
                                         </a>
                                     </li>
-                                    <li class="nk-menu-item">
-                                        <a href="{{ route('localmodels.index') }}" class="nk-menu-link">
+                                    <li class="nk-menu-item has-sub">
+                                        <a href="#" class="nk-menu-link nk-menu-toggle">
                                             <span class="nk-menu-icon">
                                                 <em class="icon ni ni-setting"></em>
                                             </span>
-                                            <span class="nk-menu-text">Local Models</span>
+                                            <span class="nk-menu-text">Models</span>
                                         </a>
-                                    </li>
-                                    <li class="nk-menu-item">
-                                        <a href="{{ route('openaimodels.index') }}" class="nk-menu-link">
-                                            <span class="nk-menu-icon">
-                                                <em class="icon ni ni-setting"></em>
-                                            </span>
-                                            <span class="nk-menu-text">OpenAI Models</span>
-                                        </a>
+                                        <ul class="nk-menu-sub">
+                                            <li class="nk-menu-item">
+                                                <a href="{{ route('localmodels.index') }}" class="nk-menu-link">
+                                                    <span class="nk-menu-text">Local Models</span>
+                                                </a>
+                                            </li>
+                                            <li class="nk-menu-item">
+                                                <a href="{{ route('openaimodels.index') }}" class="nk-menu-link">
+                                                    <span class="nk-menu-text">OpenAI Models</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </li>
                                     <li class="nk-menu-item">
                                         <form method="POST" action="{{ route('logout') }}">

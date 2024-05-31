@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
 @section('content')
-<h1 class="mb-2">Local Models</h1>
+<h1 class="mb-2">Open AI Models</h1>
 
 <div class="text-end">
     <a href="/admin/openaimodels/create" class="btn btn-primary">Add Model</a>
@@ -15,6 +15,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Value</th>
+            <th>Temperature</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -24,6 +25,7 @@
             <td>{{$key+1}}</td>
             <td>{{$model->name}}</td>
             <td>{{$model->value}}</td>
+            <td>{{$model->temp}}</td>
             <td>
                 <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
