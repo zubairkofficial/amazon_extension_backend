@@ -196,7 +196,7 @@ class BaseController extends Controller
             foreach ($productIds as $id) {
                 $scrapeProduct = ScrapeProduct::find($id);
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
-                $prompt = $setting->openai_model->openai_prompt;
+                $prompt = $this->substituteValues($setting->openai_model->openai_prompt, $scrapeProduct, $systemProduct);
                 $content = $this->substituteValues($setting->openai_model->json, $scrapeProduct, $systemProduct);
 
                 if (json_decode($content) === null) {
@@ -266,7 +266,7 @@ class BaseController extends Controller
                 $systemProduct = SystemProduct::where('code', $scrapeProduct->code)->first();
 
                 $type = $setting->local_model->type == 'completions' ? 'completions' : 'chat/completions';
-                $prompt = $setting->local_model->prompt;
+                $prompt = $this->substituteValues($setting->local_model->prompt, $scrapeProduct, $systemProduct);
                 $content = $this->substituteValues($setting->local_model->json, $scrapeProduct, $systemProduct);
 
                 if (json_decode($content) === null) {
