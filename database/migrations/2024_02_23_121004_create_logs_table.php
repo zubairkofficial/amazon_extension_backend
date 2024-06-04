@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->text('prompt');
             $table->text('image_match');
             $table->text('summary');
-            $table->string('execution_time');
+            $table->string('execution_time')->nullable();
             $table->timestamps();
         });
     }
