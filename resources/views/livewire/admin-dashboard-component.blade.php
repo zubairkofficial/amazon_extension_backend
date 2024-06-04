@@ -23,6 +23,7 @@
                                 <th>Prompt</th>
                                 <th>Product Image</th>
                                 <th>Summary</th>
+                                <th>Execution Time</th>
                                 <th>Created At</th>
                                 <th>Action</th>
                             </tr>
@@ -37,6 +38,7 @@
                                     <td>{{ Str::limit($log->prompt, 100) }}</td>
                                     <td>{{ Str::limit($log->image_match, 100) }}</td>
                                     <td>{{ Str::limit($log->summary, 100) }}</td>
+                                    <td>{{ isset($log->execution_time) ? number_format($log->execution_time, 2, '.', ',') . ' sec' : '' }}</td>
                                     <td>{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
                                     <td>
                                         <div class="dropdown">

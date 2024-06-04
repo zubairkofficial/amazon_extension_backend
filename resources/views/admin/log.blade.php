@@ -30,6 +30,10 @@
             <td style="white-space: pre-wrap">{!! $log->summary !!}</td>
         </tr>
         <tr>
+            <td class="fw-bold">Execution Time</td>
+            <td style="white-space: pre-wrap">{{ isset($log->execution_time) ? number_format($log->execution_time, 2, '.', ',') . ' sec' : '' }}</td>
+        </tr>
+        <tr>
             <td class="fw-bold">Created At</td>
             <td>{{ $log->created_at }}</td>
         </tr>
