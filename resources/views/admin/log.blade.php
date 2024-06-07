@@ -35,7 +35,7 @@
         </tr>
         <tr>
             <td class="fw-bold">CreatedDate</td>
-            <td ><p class="text-wrap">{{ \Carbon\Carbon::Parse($log->created_at)->isoFormat("MMM Do YYYY") }}</p></td>
+            <td ><p class="text-wrap">{{ \Carbon\Carbon::Parse($log->created_at)->isoFormat("MMM Do YYYY H:m:s") }}</p></td>
         </tr>
     </table>
 

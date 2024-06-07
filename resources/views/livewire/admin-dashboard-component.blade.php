@@ -39,7 +39,7 @@
                                     <td>{{ Str::limit($log->image_match, 100) }}</td>
                                     <td>{{ Str::limit($log->summary, 100) }}</td>
                                     <td>{{ isset($log->execution_time) ? number_format($log->execution_time, 2, '.', ',') . ' sec' : '' }}</td>
-                                    <td ><p class="text-wrap">{{ \Carbon\Carbon::Parse($log->created_at)->isoFormat("MMM Do YY") }}</p></td>
+                                    <td ><p class="text-wrap">{{ \Carbon\Carbon::Parse($log->created_at)->isoFormat("MMM Do YYYY H:m:s") }}</p></td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
