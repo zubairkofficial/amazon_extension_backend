@@ -34,8 +34,8 @@
             <td style="white-space: pre-wrap">{{ isset($log->execution_time) ? number_format($log->execution_time, 2, '.', ',') . ' sec' : '' }}</td>
         </tr>
         <tr>
-            <td class="fw-bold">Created At</td>
-            <td>{{ $log->created_at }}</td>
+            <td class="fw-bold">CreatedDate</td>
+            <td ><p class="text-wrap">{{ \Carbon\Carbon::Parse($log->created_at)->isoFormat("MMM Do YYYY") }}</p></td>
         </tr>
     </table>
 

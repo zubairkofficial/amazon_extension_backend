@@ -27,7 +27,7 @@
             <td>
                 <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                        aria-expanded="false">Actions
                     </button>
                     <form class="dropdown-menu">
                         <a class="dropdown-item" href="/admin/users/{{ $user->id }}">View</a>

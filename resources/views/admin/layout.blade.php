@@ -143,7 +143,7 @@
                                                 {{Auth::user()->email}}
                                             </span>
                                         </div>
-                                        <em class="icon ni ni-chevron-right ms-auto ps-1"></em>
+                                        <!-- <em class="icon ni ni-chevron-right ms-auto ps-1"></em> -->
                                     </div>
                                 </a>
                             </div>

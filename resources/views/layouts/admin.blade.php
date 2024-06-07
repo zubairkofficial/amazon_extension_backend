@@ -13,6 +13,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('assets/dashboard/css/style.css') }}">
     @stack('styles')
+    @livewireStyles
 </head>
 
 <body class="font-sans antialiased">
@@ -87,7 +88,7 @@
                                                 {{Auth::user()->email}}
                                             </span>
                                         </div>
-                                        <em class="icon ni ni-chevron-right ms-auto ps-1"></em>
+                                        <!-- <em class="icon ni ni-chevron-right ms-auto ps-1"></em> -->
                                     </div>
                                 </a>
                             </div>
@@ -218,6 +219,7 @@
         }
     </script>
     @stack('scripts')
+    @livewireScripts
 </body>
 
 </html>
