@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ScrapeProductController;
-use App\Http\Controllers\SelectorController;
+use App\Http\Controllers\Admin\SelectorController;
 use App\Http\Controllers\Api\ScapeCompareController;
 use App\Http\Controllers\Api\ErpProductCompareController;
 use Illuminate\Http\Request;

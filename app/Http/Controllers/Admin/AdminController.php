@@ -14,7 +14,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('admin.admins', [
+        return view('admin.admins.admins', [
             'users' => User::where('type', 'admin')->get()
         ]);
     }
@@ -24,7 +24,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('admin.admin-form', [
+        return view('admin.admins.admin-form', [
             'formType' => 'add'
         ]);
     }
@@ -50,7 +50,7 @@ class AdminController extends Controller
      */
     public function show(User $admin)
     {
-        return view('admin.admin', [
+        return view('admin.admins.admin', [
             'user' => $admin
         ]);
     }
@@ -60,7 +60,7 @@ class AdminController extends Controller
      */
     public function edit(User $admin)
     {
-        return view('admin.admin-form', [
+        return view('admin.admins.admin-form', [
             'user' => $admin,
             'formType' => 'update'
         ]);
@@ -94,9 +94,9 @@ class AdminController extends Controller
         $admin->delete();
         return response()->redirectTo('/admin/admins')->with('success', 'Admin deleted successfully.');
     }
-
+    
     public function admin_profile()
     {
-        return view('admin.profile');
+        return view('admin.admins.profile');
     }
 }

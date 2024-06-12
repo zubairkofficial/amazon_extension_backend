@@ -9,10 +9,8 @@ use App\Models\Setting;
 use Orhanerday\OpenAi\OpenAi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Api\BaseController;
 
-
-class ScrapeProductController extends BaseController
+class ScrapeProductController extends Controller
 {
     public function save(Request $request)
     {

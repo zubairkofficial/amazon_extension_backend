@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Selector;
 
@@ -10,12 +11,12 @@ class SelectorController extends Controller
     public function index()
     {
         $selectors = Selector::all();
-        return view('selectors.index', compact('selectors'));
+        return view('admin.selectors.index', compact('selectors'));
     }
 
     public function create()
     {
-        return view('selectors.create');
+        return view('admin.selectors.create');
     }
 
     public function store(Request $request)
@@ -31,7 +32,7 @@ class SelectorController extends Controller
     public function edit($id)
     {
         $selector = Selector::find($id);
-        return view('selectors.edit', compact('selector'));
+        return view('admin.selectors.edit', compact('selector'));
     }
     public function update(Request $request, $id)
     {

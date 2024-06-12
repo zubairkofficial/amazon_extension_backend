@@ -9,9 +9,8 @@ use App\Models\Setting;
 use App\Models\Option;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Api\BaseController;
 
-class ErpProductCompareController extends BaseController
+class ErpProductCompareController extends Controller
 {
     public function save(Request $request)
     {

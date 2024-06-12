@@ -10,9 +10,8 @@ use App\Models\Option;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
-use App\Http\Controllers\Api\BaseController;
 
-class ScapeCompareController extends BaseController
+class ScapeCompareController extends Controller
 {   
     protected $fastAp;
     

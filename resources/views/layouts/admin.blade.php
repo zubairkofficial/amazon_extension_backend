@@ -52,14 +52,6 @@
                                         </a>
                                     </li>
                                     <li class="nk-menu-item">
-                                        <a href="{{ route('setting') }}" class="nk-menu-link">
-                                            <span class="nk-menu-icon">
-                                                <em class="icon ni ni-setting-fill"></em>
-                                            </span>
-                                            <span class="nk-menu-text">Setting</span>
-                                        </a>
-                                    </li>
-                                    <li class="nk-menu-item">
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
                                             <a href="route('logout')"
