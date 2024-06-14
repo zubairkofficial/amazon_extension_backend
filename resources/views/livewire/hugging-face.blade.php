@@ -121,7 +121,7 @@
             <div class="form-group mb-4">
                 <label class="form-label" for="prompt">Product Compare Prompt</label>
                 <div class="form-control-wrap">
-                    <textarea class="form-control" rows="15" id="prompt" wire:model.defer="prompt" name="prompt"></textarea>
+                    <textarea class="form-control" rows="15" id="prompt" wire:model.defer="prompt" wire:input="updateJsonPreview" name="prompt"></textarea>
                     @error('prompt')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
