@@ -17,7 +17,8 @@ class OpenaiComponent extends Component
     public $openai_prompt;
     public $models;
     public $json;
-
+    public $check=1;
+ 
     public function mount($formType, $model = null, $scrapeArguments, $systemArguments, $models)
     {
         $this->formType = $formType;
@@ -30,24 +31,87 @@ class OpenaiComponent extends Component
         $this->systemArguments = $systemArguments;
         $this->models = $models;
         $this->json = old('json') ?? $this->model->json ?? "";
+     
         if($formType!=="update"){
             $this->updateJsonPreview();
         }
+        if($formType=="update"){
+            $this->updateJson();
+        }
     }
 
+    public function updateJson(){        
+        if($this->formType=="update"){
+            $decodedJson = json_decode($this->json, true);
+            if ($decodedJson) {
+            
+                $this->value = $decodedJson['model'] ?? null;
+                $this->temp = $decodedJson['temperature'] ?? null;
+                if (isset($decodedJson['messages'])) {
+                    foreach ($decodedJson['messages'] as &$message) {
+                        if (isset($message['role']) && $message['role'] === 'user') {
+                            $this->openai_prompt= $message['content'] ;
+                        }elseif (isset($message['role']) && $message['role'] === 'system') {
+                            $this->openai_prompt= $message['content'] ;
+                        }                        
+                    }
+                } 
+
+            }
+        }
+    }
+
+    
     public function getJsonPreviewProperty()
     {
-        $data = [];
+        if($this->formType=="update"){
+            $data = json_decode($this->json, true);
+            if($this->value){
+                $data['model'] = $this->value;
+            }
+            
+            if (isset($data['messages'])) {
+                foreach ($data['messages'] as &$message) {
+                    if (isset($message['role']) && $message['role'] === 'user') {
+                        $message['content'] = $this->openai_prompt;
+                    }elseif (isset($message['role']) && $message['role'] === 'system') {
+                        $message['content'] = $this->openai_prompt;
+                    }                    
+                }
+            } 
+            if($this->temp){
+                $data['temperature'] = $this->temp;
+            }
+        }else{
+            $data = [];
 
                 if($this->value){
                     $data['model'] = $this->value;
                 }
-                $data['messages'] = [['role' => 'system', 'content' => "You are a helpful assistant"],
-                                        ['role' => 'user', 'content' => $this->openai_prompt]];
+                switch ($this->check) {
+                    case 1:
+                        $data['messages'] = [
+                            ['role' => 'system', 'content' => "You are a helpful assistant"],
+                            ['role' => 'user', 'content' => $this->openai_prompt]
+                        ];
+                        break;
+                    case 2:
+                        $data['messages'] = [
+                            ['role' => 'system', 'content' => $this->openai_prompt]
+                        ];
+                        break;
+                    case 3:
+                        $data['messages'] = [
+                            ['role' => 'user', 'content' => $this->openai_prompt]
+                        ];
+                        break;
+                }
+                
                 if($this->temp){
                     $data['temperature'] = $this->temp;
                 }
 
+            }
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
