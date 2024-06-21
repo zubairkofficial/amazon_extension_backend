@@ -44,28 +44,28 @@
             @if($type === 'completions')
                 <div class="form-group mb-3">
                     <label for="max_tokens" class="form-label">Max Tokens</label>
-                    <input type="number" class="form-control" id="max_tokens" name="max_tokens" wire:model.defer="max_tokens" wire:input="updateJsonPreview" autocomplete="max_tokens">
+                    <input type="number" class="form-control" id="max_tokens" name="max_tokens" wire:model.defer="max_tokens" wire:input="updateJsonPreview" autocomplete="max_tokens" step="any">
                     @error('max_tokens')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="temp" class="form-label">Temperature</label>
-                    <input type="number" class="form-control" id="temp" name="temp" wire:model.defer="temp" autocomplete="temp" wire:input="updateJsonPreview">
+                    <input type="number" class="form-control" id="temp" name="temp" wire:model.defer="temp" autocomplete="temp" wire:input="updateJsonPreview" step="any">
                     @error('temp')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="top_p" class="form-label">Top_p</label>
-                    <input type="number" class="form-control" id="top_p" name="top_p" wire:model.defer="top_p" autocomplete="top_p" wire:input="updateJsonPreview">
+                    <input type="number" class="form-control" id="top_p" name="top_p" wire:model.defer="top_p" autocomplete="top_p" wire:input="updateJsonPreview" step="any">
                     @error('top_p')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="seed" class="form-label">Seed</label>
-                    <input type="number" class="form-control" id="seed" name="seed" wire:model.defer="seed" autocomplete="seed" wire:input="updateJsonPreview">
+                    <input type="number" class="form-control" id="seed" name="seed" wire:model.defer="seed" autocomplete="seed" wire:input="updateJsonPreview" step="any">
                     @error('seed')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror

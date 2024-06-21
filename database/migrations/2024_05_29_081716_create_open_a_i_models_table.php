@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('name');
             $table->text('value');
-            $table->double('temp',8,1);
+            $table->double('temp');
             $table->text('openai_prompt');
             $table->json('json');
             $table->timestamps();

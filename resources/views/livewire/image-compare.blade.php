@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group mb-3">
                     <label for="temp" class="form-label">Temperature</label>
-                    <input type="number" class="form-control" id="temp" name="temp" wire:model.defer="temp" autocomplete="temp" wire:input="updateJsonPreview">
+                    <input type="number" class="form-control" id="temp" name="temp" wire:model.defer="temp" autocomplete="temp" wire:input="updateJsonPreview" step="any">
                     @error('temp')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror

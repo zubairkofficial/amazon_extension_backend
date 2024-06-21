@@ -184,7 +184,7 @@
         <label class="form-label" for="log_delete_days">Log Delete Days</label>
         <div class="form-control-wrap">
             <input class="form-control" type="number" id="log_delete_days" name="log_delete_days"
-                value="{{ $setting->log_delete_days }}">
+                value="{{ $setting->log_delete_days }}" step="any">
             <small class="text-danger"></small>
         </div>
     </div>
