@@ -276,20 +276,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     toggleSections(); // Initial call to set the correct state based on the pre-selected value.
 
-    const imageInput = document.getElementById('image_model_temperature');
-    const imageError = document.getElementById('image_model_temperature_error');
-
-    function validateInputPattern(inputElement, errorElement) {
-        inputElement.addEventListener('input', function () {
-            if (!inputElement.checkValidity()) {
-                errorElement.textContent = 'Please enter a value between 0 and 1. Decimals are allowed.';
-            } else {
-                errorElement.textContent = '';
-            }
-        });
-    }
-
-    validateInputPattern(imageInput, imageError); 
     new ArgumentsHandler('#prompt', '.prompt-argument');
     new ArgumentsHandler('#openai_prompt', '.product-prompt-argument');
     new ArgumentsHandler('#image_prompt', '.image-prompt-argument');
