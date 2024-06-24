@@ -117,6 +117,18 @@
                 @error('json')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
+                <div class="mt-3">
+                <button type="button" class="btn btn-secondary mb-2" wire:click="toggleCurlVisibility">
+                    {{ $showCurl ? 'Hide' : 'Show' }} cURL Request
+                </button>
+                @if ($showCurl)
+                    {{-- <label for="curlRequest" class="form-label">cURL Request</label> 
+                    <div style=" background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
+                        <pre>{{ $this->curlCommand }}</pre> 
+                    </div> --}}
+                <pre><textarea class="form-control" id="curlRequest" rows="15" readonly>{{ $this->curlCommand }}</textarea></pre>
+                @endif
+            </div>
         </div>
     </form>
 </div>

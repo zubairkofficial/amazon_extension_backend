@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\OpenAIModel;
+use App\Models\Setting;
 
 class OpenaiComponent extends Component
 {   
@@ -18,6 +19,7 @@ class OpenaiComponent extends Component
     public $models;
     public $json;
     public $check=1;
+    public $showCurl = false;
  
     public function mount($formType, $model = null, $scrapeArguments, $systemArguments, $models)
     {
@@ -25,7 +27,7 @@ class OpenaiComponent extends Component
         $this->model = $model ?? (object) [];
         $this->name = old('name') ?? $this->model->name ?? "";
         $this->value = old('value') ?? $this->model->value ?? "";
-        $this->temp = old('temp') ?? $this->model->temp ?? "";
+        $this->temp = old('temp') ?? $this->model->temp ?? 0;
         $this->openai_prompt = old('openai_prompt') ?? $this->model->openai_prompt ?? "";
         $this->scrapeArguments = $scrapeArguments;
         $this->systemArguments = $systemArguments;
@@ -80,7 +82,7 @@ class OpenaiComponent extends Component
                 }
             } 
             if($this->temp){
-                $data['temperature'] = $this->temp;
+                $data['temperature'] = (float)$this->temp;
             }
         }else{
             $data = [];
@@ -108,7 +110,7 @@ class OpenaiComponent extends Component
                 }
                 
                 if($this->temp){
-                    $data['temperature'] = $this->temp;
+                    $data['temperature'] = (float)$this->temp;
                 }
 
             }
@@ -126,6 +128,27 @@ class OpenaiComponent extends Component
     public function updateJsonPreview()
     {
         $this->json = $this->getJsonPreviewProperty();
+    }
+
+    public function toggleCurlVisibility()
+    {
+        $this->showCurl = !$this->showCurl;
+    }
+
+    public function getCurlCommandProperty()
+    {
+        $escapedJson = $this->json;
+        $setting = Setting::firstOrFail();
+
+        $command = "";
+            $command = <<<CURL
+                        curl https://api.openai.com/v1/chat/completions \\
+                        -H "Content-Type: application/json" \\
+                        -H "Authorization: Bearer {$setting->key}" \\
+                        -d '{$escapedJson}'
+                        CURL;
+
+        return $command;
     }
     
     public function render()
