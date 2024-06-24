@@ -255,20 +255,23 @@ class Controller extends BaseController
                     $log->user_id = $userId;
                     $log->asin = $scrapeProduct->asin;
                     $log->prompt = $prompt;
-                    $log->summary = $summary;
+                    // $log->summary = $summary;
+                    $log->summary = $chat;
                     $log->execution_time = $executionTime;
                     $log->image_match = "Image not compared";
                 } elseif ($additionalData['reqFrom'] == "ScrapeCompare") {
                     $log = [
                         "asin" => $scrapeProduct->asin,
                         "is_retried"=> $additionalData['is_retried'],
-                        "summary" => $summary,
+                        // "summary" => $summary,
+                        "summary" => $chat,
                         "image_match" => "Image not compared",
                         'execution_time' => $executionTime 
                     ];
                 } elseif ($additionalData['reqFrom'] == "ErpProductCompare") {
                     $log = [
-                        "summary" => $summary,
+                        // "summary" => $summary,
+                        "summary" => $chat,
                         "image_match" => "Image not compared",
                         'execution_time' => $executionTime 
                     ];
@@ -331,7 +334,8 @@ class Controller extends BaseController
                         $log->user_id = $userId;
                         $log->asin = $scrapeProduct->asin;
                         $log->prompt = $prompt;
-                        $log->summary = $summary;
+                        // $log->summary = $summary;
+                        $log->summary = $response;
                         $log->execution_time = $executionTime;
                         $log->image_match = "Image not compared";
                         $log->save();
@@ -339,13 +343,15 @@ class Controller extends BaseController
                         $log = [
                             "asin" => $scrapeProduct->asin,
                             "is_retried"=> $additionalData['is_retried'],
-                            "summary" => $summary,
+                            // "summary" => $summary,
+                            "summary" => $response,
                             "image_match" => "Image not compared",
                             'execution_time' => $executionTime 
                         ];
                     } elseif ($additionalData['reqFrom'] == "ErpProductCompare") {
                         $log = [
-                            "summary" => $summary,
+                            // "summary" => $summary,
+                            "summary" => $response,
                             "image_match" => "Image not compared",
                             'execution_time' => $executionTime 
                         ];
@@ -361,3 +367,4 @@ class Controller extends BaseController
             }
         }
 }
+
