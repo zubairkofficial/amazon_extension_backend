@@ -37,7 +37,7 @@
                                     <td>{{$log->asin}}</td>
                                     <td>{{ Str::limit($log->prompt, 100) }}</td>
                                     <td>{{ Str::limit($log->image_match, 100) }}</td>
-                                    <td>{{ Str::limit($log->summary, 100) }}</td>
+                                    <td>{{ $log->fullsummary? Str::limit($log->fullsummary, 100) : Str::limit($log->summary, 100) }}</td>
                                     <td>{{ isset($log->execution_time) ? number_format($log->execution_time, 2, '.', ',') . ' sec' : '' }}</td>
                                     <td ><p class="text-wrap">{{ \Carbon\Carbon::Parse($log->created_at)->isoFormat("MMM Do YYYY H:m:s") }}</p></td>
                                     <td>

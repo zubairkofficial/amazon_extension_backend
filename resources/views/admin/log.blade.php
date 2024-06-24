@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <td class="fw-bold">Summary</td>
-            <td style="white-space: pre-wrap">{!! $log->summary !!}</td>
+            <td style="white-space: pre-wrap">{!! $log->fullsummary ? $log->fullsummary :$log->summary !!}</td>
         </tr>
         <tr>
             <td class="fw-bold">Execution Time</td>
