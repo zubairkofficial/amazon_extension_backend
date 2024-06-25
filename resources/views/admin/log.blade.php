@@ -27,8 +27,14 @@
         </tr>
         <tr>
             <td class="fw-bold">Summary</td>
-            <td style="white-space: pre-wrap">{!! $log->fullsummary ? $log->fullsummary :$log->summary !!}</td>
+            <td style="white-space: pre-wrap">{!! $log->summary !!}</td>
         </tr>
+        @if($log->fullsummary)
+            <tr>
+                <td class="fw-bold">Full Response</td>
+                <td style="white-space: pre-wrap">{!! $log->fullsummary !!}</td>
+            </tr>
+        @endif
         <tr>
             <td class="fw-bold">Execution Time</td>
             <td style="white-space: pre-wrap">{{ isset($log->execution_time) ? number_format($log->execution_time, 2, '.', ',') . ' sec' : '' }}</td>
