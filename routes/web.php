@@ -64,5 +64,5 @@ Route::middleware(['auth', 'admin.check'])->prefix('/admin')->group(function () 
     Route::post('selectors/destroy/{id}', [SelectorController::class, 'destroy'])->name('selectors.destroy');
 
     Route::get('/all-wrong-prompt-response', [WrongPromptResponseController::class, 'index'])->name('wrong-prompt-resp');
-    Route::get('/wrong-prompt-resp/delete/{id}', [DashboardController::class, 'destroy']);
+    Route::get('/wrong-prompt-resp/delete/{id}', [WrongPromptResponseController::class, 'destroy']);
 });
