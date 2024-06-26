@@ -18,6 +18,7 @@
                         <thead>
                             <tr>
                                 <th>Sr. </th>
+                                <th>User</th>
                                 <th>Log ID</th>
                                 <th>ASIN</th>
                                 <th>Product ID</th>
@@ -29,6 +30,7 @@
                             @foreach($alldata as $key => $data)
                                 <tr>
                                     <td>{{$key + 1}}</td>
+                                    <td>{{$data->user->name}}</td>
                                     <td>{{$data->log_id}}</td>
                                     <td>{{$data->asin}}</td>
                                     <td>{{$data->product_id}}</td>

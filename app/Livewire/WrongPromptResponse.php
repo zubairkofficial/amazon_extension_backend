@@ -18,6 +18,9 @@ class WrongPromptResponse extends Component
         ->orWhereHas('log', function ($query) {
             $query->where('id', 'like', '%' . $this->search . '%');
         })
+        ->orWhereHas('user', function ($query) {
+            $query->where('name', 'like', '%' . $this->search . '%');
+        })
         ->orderBy('id', 'DESC')
         ->paginate(10);
     

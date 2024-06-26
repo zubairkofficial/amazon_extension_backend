@@ -12,4 +12,9 @@ class WrongPromptResponse extends Model
     {
         return $this->hasOne(Log::class, 'id', 'log_id');
     }
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }
+
