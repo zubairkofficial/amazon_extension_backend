@@ -8,30 +8,6 @@ use App\Models\Log;
 
 class DashboardController extends Controller
 {
-    public function fetchLogs(Request $request)
-    {
-        $searchQuery = $request->input('search', '');
-
-        $query = Log::query();
-
-        if (!empty ($searchQuery)) {
-            $query->where(function ($q) use ($searchQuery) {
-                $q->where('asin', 'LIKE', "%{$searchQuery}%")
-                    ->orWhere('prompt', 'LIKE', "%{$searchQuery}%")
-                    ->orWhere('summary', 'LIKE', "%{$searchQuery}%");
-                $q->orWhereHas('user', function ($query) use ($searchQuery) {
-                    $query->where('name', 'LIKE', "%{$searchQuery}%");
-                });
-            });
-        }
-
-        $logs = $query->with('user')->orderBy('id', 'DESC')->get();
-
-        $data=["currentPage"=>$request->currentPage,"logs"=>$logs];
-
-        return response()->json($data);
-    }
-
     public function index()
     {
         return view('admin.dashboard');

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\LocalModelController;
 use App\Http\Controllers\Admin\OpenAIModelController;
 use App\Http\Controllers\Admin\imageCompareModelController;
+use App\Http\Controllers\Admin\WrongPromptResponseController;
 use App\Http\Controllers\Admin\SelectorController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -42,7 +43,6 @@ Route::middleware(['auth', 'admin.check'])->prefix('/admin')->group(function () 
     Route::get('/admin_profile', [AdminController::class, 'admin_profile'])->name('admin.profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.adminupdate');
 
-    Route::get('/fetch-logs', [DashboardController::class, 'fetchLogs']);
     Route::get('/log/{id}', [DashboardController::class, 'show']);
     Route::get('/log/delete/{id}', [DashboardController::class, 'destroy']);
     Route::get('/dashboard', [DashboardController::class, 'index']);
@@ -62,4 +62,7 @@ Route::middleware(['auth', 'admin.check'])->prefix('/admin')->group(function () 
     Route::get('selectors/{id}/edit', [SelectorController::class, 'edit'])->name('selectors.edit');
     Route::post('selectors/update/{id}', [SelectorController::class, 'update'])->name('selectors.update');
     Route::post('selectors/destroy/{id}', [SelectorController::class, 'destroy'])->name('selectors.destroy');
+
+    Route::get('/all-wrong-prompt-response', [WrongPromptResponseController::class, 'index'])->name('wrong-prompt-resp');
+    Route::get('/wrong-prompt-resp/delete/{id}', [DashboardController::class, 'destroy']);
 });

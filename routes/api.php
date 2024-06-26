@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ScrapeProductController;
 use App\Http\Controllers\Admin\SelectorController;
 use App\Http\Controllers\Api\ScapeCompareController;
 use App\Http\Controllers\Api\ErpProductCompareController;
+use App\Http\Controllers\Api\WrongPromptResponseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,3 +33,4 @@ Route::prefix('selectors')->group(function () {
 });
 Route::post('scrapecompare', [ScapeCompareController::class, "save"]);
 Route::post('erpcompare', [ErpProductCompareController::class, "save"]);
+Route::post('wrong-prompt-resp', [WrongPromptResponseController::class, "store"]);

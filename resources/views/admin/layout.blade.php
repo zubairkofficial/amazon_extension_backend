@@ -66,6 +66,14 @@
                                         </a>
                                     </li>
                                     <li class="nk-menu-item">
+                                        <a href="{{ route('wrong-prompt-resp') }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon">
+                                                <em class="icon ni ni-list"></em>
+                                            </span>
+                                            <span class="nk-menu-text">Wrong Prompt Response</span>
+                                        </a>
+                                    </li>
+                                    <li class="nk-menu-item">
                                         <a href="/admin/settings" class="nk-menu-link">
                                             <span class="nk-menu-icon">
                                                 <em class="icon ni ni-setting-fill"></em>
