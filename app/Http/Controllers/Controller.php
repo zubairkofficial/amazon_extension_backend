@@ -149,6 +149,7 @@ class Controller extends BaseController
             if ($response->successful()) {
                 $productData = $response->json();
                 $systemProduct = new SystemProduct();
+                $systemProduct->product_id = $productData['id'];
                 $systemProduct->title = $productData['title'];
                 $systemProduct->description = $productData['description'];
                 $systemProduct->mpn = $productData['mpn'];
@@ -285,6 +286,7 @@ class Controller extends BaseController
                 }
                 if ($additionalData['reqFrom'] == "ScrapeProduct") {
                     $log->save();
+                    $log->product_id=$systemProduct->product_id;
                 }
                 ScrapeProduct::find($id)->delete();
                 SystemProduct::where('code', $scrapeProduct->code)->first()->delete();
@@ -339,6 +341,7 @@ class Controller extends BaseController
                         $log->execution_time = $executionTime;
                         $log->image_match = "Image not compared";
                         $log->save();
+                        $log->product_id=$systemProduct->product_id;
                     } elseif ($additionalData['reqFrom'] == "ScrapeCompare") {
                         $log = [
                             "asin" => $scrapeProduct->asin,

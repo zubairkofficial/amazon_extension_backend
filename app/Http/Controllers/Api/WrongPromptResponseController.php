@@ -12,9 +12,7 @@ class WrongPromptResponseController extends Controller
        $data = new WrongPromptResponse();
        $data->log_id = $request->id;
        $data->asin   = $request->asin;
-       if($request->product_id){
-        $data->product_id = $request->product_id;
-       }
+       $data->product_id = $request->product_id;
        $data->save();
        return response()->json(["message" => "Data save successfully"], 200);
     }

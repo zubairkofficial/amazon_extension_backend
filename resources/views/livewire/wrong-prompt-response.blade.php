@@ -35,7 +35,7 @@
                                             <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                                     aria-expanded="false">Actions</button>
                                             <form class="dropdown-menu">
-                                                <a class="dropdown-item" href="/admin/log/{{ $data->id }}">View</a>
+                                                <a class="dropdown-item" href="/admin/log/{{ $data->log_id }}">View</a>
                                                 <a class="dropdown-item" href="/admin/wrong-prompt-resp/delete/{{ $data->id }}">Delete</a>
                                             </form>
                                         </div>
