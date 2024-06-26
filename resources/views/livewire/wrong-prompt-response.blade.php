@@ -30,7 +30,7 @@
                             @foreach($alldata as $key => $data)
                                 <tr>
                                     <td>{{$key + 1}}</td>
-                                    <td>{{$data->user->name}}</td>
+                                    <td>{{$data?->user?->name}}</td>
                                     <td>{{$data->log_id}}</td>
                                     <td>{{$data->asin}}</td>
                                     <td>{{$data->product_id}}</td>
