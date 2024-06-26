@@ -20,6 +20,7 @@
                                 <th>Sr. </th>
                                 <th>Log ID</th>
                                 <th>ASIN</th>
+                                <th>Product ID</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -30,6 +31,7 @@
                                     <td>{{$key + 1}}</td>
                                     <td>{{$data->log_id}}</td>
                                     <td>{{$data->asin}}</td>
+                                    <td>{{$data->Product_id}}</td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown"

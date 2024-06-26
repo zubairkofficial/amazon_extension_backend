@@ -14,6 +14,7 @@ class WrongPromptResponse extends Component
     public function render()
     {
         $alldata = ResponseDataModel::where('asin', 'like', '%' . $this->search . '%')
+        ->orWhere('product_id', 'like', '%' . $this->search . '%')
         ->orWhereHas('log', function ($query) {
             $query->where('id', 'like', '%' . $this->search . '%');
         })
