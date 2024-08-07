@@ -9,6 +9,7 @@
             </div>      
         </div>
     </div>
+    @include('admin.partials.message')
     <div class="nk-block">
         <div class="card shadown-none">
             <div class="card-body">

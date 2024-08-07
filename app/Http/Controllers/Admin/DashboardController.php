@@ -16,14 +16,18 @@ class DashboardController extends Controller
     public function show($id)
     {
         $log = Log::with('user')->find($id);
-        // $log->summary = $this->formatResponse($this->responseDecode($log->summary));
+
+        if (!$log) {
+            return Redirect::back()->with('success', 'Log not found.');
+        }
+
         $log->image_match = $this->formatResponse($log->image_match);
         $log->summary = $this->formatResponse($log->summary);
+
         return view('admin.log', [
             'log' => $log
         ]);
     }
-
     public function destroy($id)
     {
         Log::find($id)->delete();
